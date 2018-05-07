@@ -1,14 +1,8 @@
-/*
-Package stacks enables management and retrieval of Stacks
-Stack service.
-
-
-Example to List Stacks
-
-lis := stacks.ListOpts{SortDir:stacks.SortAsc,SortKey:stacks.SortStatus}
-allStacks, err := stacks.List(client,lis).AllPages()
-stacks,err:=stacks.ExtractStacks(allStacks)
-fmt.Println(stacks)
-*/
+// Package stacks provides operation for working with Heat stacks. A stack is a
+// group of resources (servers, load balancers, databases, and so forth)
+// combined to fulfill a useful purpose. Based on a template, Heat orchestration
+// engine creates an instantiated set of resources (a stack) to run the
+// application framework or component specified (in the template). A stack is a
+// running instance of a template. The result of creating a stack is a deployment
+// of the application framework or component.
 package stacks
-

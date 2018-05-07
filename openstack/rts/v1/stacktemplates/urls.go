@@ -1,11 +1,11 @@
 package stacktemplates
 
-import (
-	"github.com/huaweicloud/golangsdk"
-)
+import "github.com/gophercloud/gophercloud"
 
-func getTemplateURL(c *golangsdk.ServiceClient, stackName, stackID string) string {
+func getURL(c *gophercloud.ServiceClient, stackName, stackID string) string {
 	return c.ServiceURL("stacks", stackName, stackID, "template")
 }
 
-
+func validateURL(c *gophercloud.ServiceClient) string {
+	return c.ServiceURL("validate")
+}

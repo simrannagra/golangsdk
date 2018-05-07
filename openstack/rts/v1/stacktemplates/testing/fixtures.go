@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	//"github.com/huaweicloud/golangsdk/openstack/rts/v1/stacktemplates"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"github.com/gophercloud/gophercloud/openstack/orchestration/v1/stacktemplates"
+	th "github.com/gophercloud/gophercloud/testhelper"
+	fake "github.com/gophercloud/gophercloud/testhelper/client"
 )
 
 // GetExpected represents the expected object from a Get request.
@@ -52,3 +52,45 @@ func HandleGetSuccessfully(t *testing.T, output string) {
 	})
 }
 
+// ValidateExpected represents the expected object from a Validate request.
+var ValidateExpected = &stacktemplates.ValidatedTemplate{
+	Description: "Simple template to test heat commands",
+	Parameters: map[string]interface{}{
+		"flavor": map[string]interface{}{
+			"Default":     "m1.tiny",
+			"Type":        "String",
+			"NoEcho":      "false",
+			"Description": "",
+			"Label":       "flavor",
+		},
+	},
+}
+
+// ValidateOutput represents the response body from a Validate request.
+const ValidateOutput = `
+{
+	"Description": "Simple template to test heat commands",
+	"Parameters": {
+		"flavor": {
+			"Default": "m1.tiny",
+			"Type": "String",
+			"NoEcho": "false",
+			"Description": "",
+			"Label": "flavor"
+		}
+	}
+}`
+
+// HandleValidateSuccessfully creates an HTTP handler at `/validate`
+// on the test handler mux that responds with a `Validate` response.
+func HandleValidateSuccessfully(t *testing.T, output string) {
+	th.Mux.HandleFunc("/validate", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Accept", "application/json")
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, output)
+	})
+}
