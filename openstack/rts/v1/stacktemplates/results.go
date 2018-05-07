@@ -3,12 +3,12 @@ package stacktemplates
 import (
 	"encoding/json"
 
-	"github.com/gophercloud/gophercloud"
+	"github.com/huaweicloud/golangsdk"
 )
 
 // GetResult represents the result of a Get operation.
 type GetResult struct {
-	gophercloud.Result
+	golangsdk.Result
 }
 
 // Extract returns the JSON template and is called after a Get operation.
@@ -21,24 +21,4 @@ func (r GetResult) Extract() ([]byte, error) {
 		return nil, err
 	}
 	return template, nil
-}
-
-// ValidatedTemplate represents the parsed object returned from a Validate request.
-type ValidatedTemplate struct {
-	Description     string                 `json:"Description"`
-	Parameters      map[string]interface{} `json:"Parameters"`
-	ParameterGroups map[string]interface{} `json:"ParameterGroups"`
-}
-
-// ValidateResult represents the result of a Validate operation.
-type ValidateResult struct {
-	gophercloud.Result
-}
-
-// Extract returns a pointer to a ValidatedTemplate object and is called after a
-// Validate operation.
-func (r ValidateResult) Extract() (*ValidatedTemplate, error) {
-	var s *ValidatedTemplate
-	err := r.ExtractInto(&s)
-	return s, err
 }
