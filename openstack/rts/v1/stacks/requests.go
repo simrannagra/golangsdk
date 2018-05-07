@@ -1,10 +1,10 @@
 package stacks
 
 import (
+
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
 )
-
 // SortDir is a type for specifying in which direction to sort a list of stacks.
 type SortDir string
 
@@ -26,8 +26,7 @@ var (
 	SortUpdatedAt SortKey = "updated_at"
 )
 
-// ListOptsBuilder allows extensions to add additional parameters to the
-// List request.
+
 type ListOptsBuilder interface {
 	ToStackListQuery() (string, error)
 }
@@ -73,7 +72,13 @@ func List(c *golangsdk.ServiceClient, opts ListOptsBuilder) pagination.Pager {
 	return pagination.NewPager(c, url, createPage)
 }
 
+
+// Get retreives a stack based on the stack name and stack ID.
 func Get(c *golangsdk.ServiceClient, stackName, stackID string) (r GetResult) {
 	_, r.Err = c.Get(getURL(c, stackName, stackID), &r.Body, nil)
 	return
 }
+
+
+
+
