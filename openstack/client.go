@@ -304,6 +304,12 @@ func NewNetworkV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
+// NewClusterV1 creates a ServiceClient that may be used with the v2 network
+// package.
+func NewClusterV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cce")
+}
+
 // NewBlockStorageV1 creates a ServiceClient that may be used to access the v1
 // block storage service.
 func NewBlockStorageV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
