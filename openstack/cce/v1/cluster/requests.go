@@ -59,7 +59,7 @@ func FilterClusters(clusters []RetrievedCluster, opts ListOpts) ([]RetrievedClus
 	}
 	if opts.Type != "" {
 		clusfield = "Clusterspec"
-		m["Type"] = opts.Type
+		m["ClusterType"] = opts.Type
 	}
 	if opts.VPC != "" {
 		clusfield = "Clusterspec"
