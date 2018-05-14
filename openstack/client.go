@@ -278,6 +278,10 @@ func initClientOpts(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts,
 	if err != nil {
 		return sc, err
 	}
+	/*sc.ProviderClient = client
+	sc.Endpoint = "https://cce.eu-de.otc.t-systems.com"
+	sc.Type = "cce"
+	return sc, nil*/
 	sc.ProviderClient = client
 	sc.Endpoint = url
 	sc.Type = clientType
@@ -330,6 +334,12 @@ func NewSharedFileSystemV2(client *golangsdk.ProviderClient, eo golangsdk.Endpoi
 // CDN service.
 func NewCDNV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "cdn")
+}
+
+// NewClusteringV1 creates a ServiceClient that may be used with the v1 clustering
+// package.
+func  NewClusteringV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+	return initClientOpts(client, eo, "cce")
 }
 
 // NewOrchestrationV1 creates a ServiceClient that may be used to access the v1
