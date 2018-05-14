@@ -25,7 +25,7 @@ func TestGetCluster(t *testing.T) {
 		fmt.Fprintf(w, GetOutput)
 	})
 
-	actual, err := clusters.Get(fake.ServiceClient(), "d83af16b-febd-4e52-bfb0-20850072e2cd").Extract()
+	actual, err := cluster.Get(fake.ServiceClient(), "d83af16b-febd-4e52-bfb0-20850072e2cd").Extract()
 	th.AssertNoErr(t, err)
 	expected := GetExpected
 	th.AssertDeepEquals(t, expected, actual)
@@ -43,12 +43,12 @@ func TestCreateCluster(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
 	})
-	options := clusters.CreateOpts{"cluster","v1",clusters.CreateMetadataspec{"test-cluster"},
-		clusters.CreateSpec{Vpc: "5232f396-d6cc-4a81-8de3-afd7a7ecdf456",
+	options := cluster.CreateOpts{"cluster","v1", cluster.CreateMetadataspec{"test-cluster"},
+		cluster.CreateSpec{Vpc: "5232f396-d6cc-4a81-8de3-afd7a7ecdf456",
 			Subnet: "b857922b-cff7-42f2-b5ee-02619c0081e5",
 			Region: "eu-de",
 			ClusterType: "Single"}}
-	resp:=clusters.Create(fake.ServiceClient(),options)
+	resp:= cluster.Create(fake.ServiceClient(),options)
 	th.AssertNoErr(t, resp.Err)
 
 }
@@ -64,8 +64,8 @@ func TestUpdateCluster(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 	})
-	options := clusters.UpdateOpts{"cluster","v1",clusters.UpdateSpec{"test","989249a7-87e9-4a65-8643-9ed6adf125ec"}}
-	resp:=clusters.Update(fake.ServiceClient(),"d83af16b-febd-4e52-bfb0-20850072e2cd",options)
+	options := cluster.UpdateOpts{"cluster","v1", cluster.UpdateSpec{"test","989249a7-87e9-4a65-8643-9ed6adf125ec"}}
+	resp:= cluster.Update(fake.ServiceClient(),"d83af16b-febd-4e52-bfb0-20850072e2cd",options)
 	th.AssertNoErr(t, resp.Err)
 }
 
@@ -79,6 +79,6 @@ func TestDeleteVpc(t *testing.T) {
 		w.WriteHeader(http.StatusNoContent)
 	})
 
-	res := clusters.Delete(fake.ServiceClient(), "d83af16b-febd-4e52-bfb0-20850072e2cd")
+	res := cluster.Delete(fake.ServiceClient(), "d83af16b-febd-4e52-bfb0-20850072e2cd")
 	th.AssertNoErr(t, res.Err)
 }
