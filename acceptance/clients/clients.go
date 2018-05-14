@@ -395,6 +395,25 @@ func NewNetworkV2Client() (*golangsdk.ServiceClient, error) {
 	})
 }
 
+// NewCCEV1Client returns a *ServiceClient for making calls to the
+// OpenStack Cloud Container Engine v1 API. An error will be returned if authentication
+// or client creation was not possible.
+func NewCCEV1Client() (*golangsdk.ServiceClient, error) {
+	ao, err := openstack.AuthOptionsFromEnv()
+	if err != nil {
+		return nil, err
+	}
+
+	client, err := openstack.AuthenticatedClient(ao)
+	if err != nil {
+		return nil, err
+	}
+
+	return openstack.NewCCEV1(client, golangsdk.EndpointOpts{
+		Region: os.Getenv("OS_REGION_NAME"),
+	})
+}
+
 // NewPeerNetworkV2Client returns a *ServiceClient for making calls to the
 // OpenStack Networking v2 API for Peer. An error will be returned if authentication
 // or client creation was not possible.
