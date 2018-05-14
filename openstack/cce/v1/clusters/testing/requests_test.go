@@ -6,8 +6,9 @@ import (
 	"testing"
 
 	fake "github.com/huaweicloud/golangsdk/openstack/cce/common"
-	"github.com/huaweicloud/golangsdk/openstack/cce/clusters"
+	"github.com/huaweicloud/golangsdk/openstack/cce/v1/clusters"
 	th "github.com/huaweicloud/golangsdk/testhelper"
+
 )
 
 

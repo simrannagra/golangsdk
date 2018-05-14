@@ -220,6 +220,7 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
+// ExtractCluster is a function that accepts a result and extracts a cluster.
 func (r commonResult) Extract() (*RetrievedCluster, error) {
 	var s RetrievedCluster
 	err := r.ExtractInto(&s)

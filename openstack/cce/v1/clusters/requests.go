@@ -187,7 +187,7 @@ type UpdateOptsBuilder interface {
 	ToVpcUpdateMap() (map[string]interface{}, error)
 }
 
-// UpdateOpts contains the values used when updating a vpc.
+// UpdateOpts contains the values used when updating a cluster.
 type UpdateOpts struct {
 	Kind 		string 		 `json:"kind" required:"true"`
 	ApiVersion 	string 		 `json:"apiVersion" required:"true"`
@@ -199,7 +199,7 @@ func (opts UpdateOpts) ToVpcUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
 }
 
-// Update allows clusters to add EIP.
+// Update allows clusters to add EIP and description.
 func Update(c *golangsdk.ServiceClient, id string, opts UpdateOptsBuilder) (r UpdateResult) {
 	b, err := opts.ToVpcUpdateMap()
 	if err != nil {

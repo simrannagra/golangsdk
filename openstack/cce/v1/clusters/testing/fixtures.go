@@ -2,7 +2,8 @@ package testing
 
 import (
 
-	"github.com/huaweicloud/golangsdk/openstack/cce/clusters"
+	"github.com/huaweicloud/golangsdk/openstack/cce/v1/clustersers"
+	"github.com/huaweicloud/golangsdk/openstack/cce/v1/clusters"
 )
 
 const GetOutput = `
