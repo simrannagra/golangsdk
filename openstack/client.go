@@ -304,9 +304,9 @@ func NewNetworkV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (
 	return sc, err
 }
 
-// NewClusterV1 creates a ServiceClient that may be used with the v2 network
+// NewCCEV1 creates a ServiceClient that may be used with the v1 CCE
 // package.
-func NewClusterV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
+func NewCCEV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	return initClientOpts(client, eo, "cce")
 }
 
