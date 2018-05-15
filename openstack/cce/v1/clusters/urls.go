@@ -1,4 +1,4 @@
-package cluster
+package clusters
 
 import "github.com/huaweicloud/golangsdk"
 
@@ -13,4 +13,8 @@ func rootURL(client *golangsdk.ServiceClient) string {
 
 func certificateURL(c *golangsdk.ServiceClient, id string) string {
 	return c.ServiceURL(rootpath, id, certificatePath)
+}
+
+func resourceURL(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL(rootpath, id)
 }

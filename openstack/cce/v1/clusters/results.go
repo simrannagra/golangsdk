@@ -1,10 +1,10 @@
-package cluster
+package clusters
 
 import (
 	"github.com/huaweicloud/golangsdk"
 )
 
-type OutStatus struct {
+type ClusterStatus struct {
 	Status string `json:"status"`
 }
 
@@ -36,10 +36,10 @@ type ClusterHostList struct {
 }
 
 type HostListSpec struct {
-	HostList []HostList `json:"hostList"`
+	HostList []Host `json:"hostList"`
 }
 
-type HostList struct {
+type Host struct {
 	Kind       string   `json:"kind"`
 	ApiVersion string   `json:"apiVersion"`
 	Metadata   MetaData `json:"metadata"`
@@ -129,7 +129,7 @@ type RetrievedCluster struct {
 	ApiVersion    string          `json:"apiVersion"`
 	Metadata      MetaData        `json:"metadata"`
 	Clusterspec   ClusterlistSpec `json:"spec"`
-	ClusterStatus OutStatus       `json:"clusterStatus"`
+	ClusterStatus ClusterStatus   `json:"clusterStatus"`
 	K8sVersion    string          `json:"k8s_version"`
 }
 
@@ -163,11 +163,36 @@ func (r commonResult) ExtractCluster(opts ListOpts) ([]RetrievedCluster, error) 
 	return FilterClusters(s, opts)
 }
 
-// Extract is a function that accepts a result and extracts a cluster.
-func (r commonResult) Extract() (*Certificate, error) {
+// ExtractCluster is a function that accepts a result and extracts a cluster.
+func (r commonResult) Extract() (*RetrievedCluster, error) {
+	var s RetrievedCluster
+	err := r.ExtractInto(&s)
+	return &s, err
+}
+
+// ExtractCerts is a function that accepts a result and extracts a cluster certificate.
+func (r commonResult) ExtractCerts() (*Certificate, error) {
 	var s Certificate
 	err := r.ExtractInto(&s)
 	return &s, err
+}
+
+// CreateResult represents the result of a create operation. Call its Extract
+// method to interpret it as a Cluster.
+type CreateResult struct {
+	golangsdk.ErrResult
+}
+
+// UpdateResult represents the result of an update operation. Call its Extract
+// method to interpret it as a Cluster.
+type UpdateResult struct {
+	golangsdk.ErrResult
+}
+
+// DeleteResult represents the result of a delete operation. Call its ExtractErr
+// method to determine if the request succeeded or failed.
+type DeleteResult struct {
+	golangsdk.ErrResult
 }
 
 // GetResult represents the result of a get operation. Call its Extract
