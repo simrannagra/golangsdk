@@ -7,10 +7,11 @@ const (
 	resourcePath = "hosts"
 )
 
-func noderCreateURL(c *golangsdk.ServiceClient, clusteruuid string) string {
+func rootURL(c *golangsdk.ServiceClient, clusteruuid string) string {
 	return c.ServiceURL(apiName, clusteruuid, resourcePath)
 }
 
-func noderGetURL(c *golangsdk.ServiceClient, clusteruuid string, hostuuid string) string {
+func resourceURL(c *golangsdk.ServiceClient, clusteruuid string, hostuuid string) string {
 	return c.ServiceURL(apiName, clusteruuid, resourcePath, hostuuid)
 }
+

@@ -92,3 +92,38 @@ type GetResult struct {
 type DeleteResult struct {
 	golangsdk.ErrResult
 }
+
+
+type RetrievedNode struct {
+	Kind 			string                   `json:"kind"`
+	ApiVersion 		string             `json:"apiVersion"`
+	Metadata 		Metadata             `json:"metadata"`
+	HostListSpec  	HostListSpec 		`json:"spec"`
+}
+
+type HostListSpec struct {
+	HostList []Hostlist `json:"hostList"`
+}
+type Hostlist struct {
+	Kind       string  `json:"kind"`
+	ApiVersion string  `json:"apiVersion"`
+	Metadata   Metadata `json:"metadata"`
+	Hostspec   Spec 	`json:"spec"`
+	Replicas   int      `json:"replicas"`
+	Status     string   `json:"status"`
+}
+
+// ExtractNode is a function that accepts a result and extracts a nodes.
+func (r commonResult) ExtractNode(opts ListOpts) ([]Hostlist, error) {
+	var s RetrievedNode
+	err := r.ExtractInto(&s)
+	if err!= nil{
+		return nil,err
+	}
+	return FilterNodes(s.HostListSpec.HostList ,opts)
+}
+
+
+type ListResult struct {
+	commonResult
+}
