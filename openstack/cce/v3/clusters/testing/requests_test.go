@@ -9,8 +9,6 @@ import (
 	"testing"
 )
 
-
-
 func TestGetV3Cluster(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -65,22 +63,21 @@ func TestCreateV3Cluster(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		fmt.Fprintf(w,Output)
+		fmt.Fprintf(w, Output)
 	})
-	options := clusters.CreateOpts{Kind:"Cluster",
-		ApiVersion:"v3",
-		Metadata:clusters.CreateMetaData{Name:"test-cluster"},
-		Spec:clusters.Spec{Type: "VirtualMachine",
-			Flavor: "cce.s1.small",
-			Version:"v1.7.3-r10",
-			HostNetwok:clusters.HostNetwokSpec{
-				VpcId:"3305eb40-2707-4940-921c-9f335f84a2ca",
-				SubnetId:"00e41db7-e56b-4946-bf91-27bb9effd664",},
-			ContainerNetwork:clusters.ContainerNetworkSpec{Mode:"overlay_l2"},
+	options := clusters.CreateOpts{Kind: "Cluster",
+		ApiVersion: "v3",
+		Metadata:   clusters.CreateMetaData{Name: "test-cluster"},
+		Spec: clusters.Spec{Type: "VirtualMachine",
+			Flavor:  "cce.s1.small",
+			Version: "v1.7.3-r10",
+			HostNetwok: clusters.HostNetwokSpec{
+				VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
+				SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
+			ContainerNetwork: clusters.ContainerNetworkSpec{Mode: "overlay_l2"},
 		},
-
 	}
-	actual,err := clusters.Create(fake.ServiceClient(), options).Extract()
+	actual, err := clusters.Create(fake.ServiceClient(), options).Extract()
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)
@@ -110,7 +107,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 		fmt.Fprintf(w, Output)
 	})
 	options := clusters.UpdateOpts{clusters.UpdateSpec{"new description"}}
-	actual,err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options).Extract()
+	actual, err := clusters.Update(fake.ServiceClient(), "daa97872-59d7-11e8-a787-0255ac101f54", options).Extract()
 	th.AssertNoErr(t, err)
 	expected := Expected
 	th.AssertDeepEquals(t, expected, actual)

@@ -6,79 +6,83 @@ import (
 
 type Clusters struct {
 	// API type, fixed value Cluster
-	Kind 		string 		`json:"kind" required:"true"`
+	Kind string `json:"kind" required:"true"`
 	//API version, fixed value v3
-	ApiVersion  string 		`json:"apiversion" required:"true"`
+	ApiVersion string `json:"apiversion" required:"true"`
 	//Medata of a Cluster
-	Metadata   MetaData	`json:"metadata" required:"true"`
+	Metadata MetaData `json:"metadata" required:"true"`
 	//specifications of a Cluster
-	Spec		Spec	`json:"spec" required:"true"`
+	Spec Spec `json:"spec" required:"true"`
 	//status of a Cluster
-	Status 		  Status   		  `json:"status"`
+	Status Status `json:"status"`
 }
+
 //Medata required to create a cluster
 type MetaData struct {
 	//Cluster unique name
-	Name 			string 					`json:"name"`
+	Name string `json:"name"`
 	//Cluster unique Id
-	Id              string					`json:"uid"`
+	Id string `json:"uid"`
 	// Cluster tag, key/value pair format
-	Labels 			[]map[string]string  	`json:"labels,omitempty"`
+	Labels []map[string]string `json:"labels,omitempty"`
 	//Cluster annotation, key/value pair format
-	Annotations		[]map[string]string		`json:"annotations,omitempty"`
+	Annotations []map[string]string `json:"annotations,omitempty"`
 }
+
 //Specifications to create a cluster
 type Spec struct {
 	//Cluster Type: VirtualMachine, BareMetal, or Windows
-	Type 				string 					`json:"type" required:"true"`
+	Type string `json:"type" required:"true"`
 	// Cluster specifications
-	Flavor 				string					`json:"flavor" required:"true"`
+	Flavor string `json:"flavor" required:"true"`
 	// For the cluster version, please fill in v1.7.3-r10 or v1.9.2-r1. Currently only Kubernetes 1.7 and 1.9 clusters are supported.
-	Version				string					`json:"version,omitempty"`
+	Version string `json:"version,omitempty"`
 	//Cluster description
-	Description 		string					`json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
 	// Node network parameters
-	HostNetwok			HostNetwokSpec			`json:"hostNetwork" required:"true"`
+	HostNetwok HostNetwokSpec `json:"hostNetwork" required:"true"`
 	//Container network parameters
-	ContainerNetwork   	ContainerNetworkSpec	`json:"containerNetwork" required:"true"`
+	ContainerNetwork ContainerNetworkSpec `json:"containerNetwork" required:"true"`
 	// Charging mode of the cluster, which is 0 (on demand)
-	BillingMode			int						`json:"billingMode ,omitempty"`
+	BillingMode int `json:"billingMode ,omitempty"`
 	//Extended parameter for a cluster
-	ExtendParam			string					`json:"extendParam ,omitempty"`
+	ExtendParam string `json:"extendParam ,omitempty"`
 }
+
 // Node network parameters
 type HostNetwokSpec struct {
 	//The ID of the VPC used to create the node
-	VpcId 			string  `json:"vpc" required:"true"`
+	VpcId string `json:"vpc" required:"true"`
 	//The ID of the subnet used to create the node
-	SubnetId 		string	`json:"subnet" required:"true"`
+	SubnetId string `json:"subnet" required:"true"`
 	// The ID of the high speed network used to create bare metal nodes.
 	// This parameter is required when creating a bare metal cluster.
-	HighwaySubnet	string  `json:"highwaySubnet ,omitempty"`
+	HighwaySubnet string `json:"highwaySubnet ,omitempty"`
 }
+
 //Container network parameters
 type ContainerNetworkSpec struct {
 	//Container network type: overlay_l2 , underlay_ipvlan or vpc-router
-	Mode  string `json:"mode" required:"true"`
+	Mode string `json:"mode" required:"true"`
 	//Container network segment: 172.16.0.0/16 ~ 172.31.0.0/16. If there is a network segment conflict, it will be automatically reselected.
-	Cidr  string `json:"cidr ,omitempty"`
+	Cidr string `json:"cidr ,omitempty"`
 }
 
 type Status struct {
 	//The state of the cluster
-	Phase		string  `json:"phase"`
+	Phase string `json:"phase"`
 	//The ID of the Job that is operating asynchronously in the cluster
-	JobID		string  `json:"jobID"`
+	JobID string `json:"jobID"`
 	//Reasons for the cluster to become current
-	Reason		string  `json:"reason"`
+	Reason string `json:"reason"`
 	//The status of each component in the cluster
-	Conditions	Conditions	`json:"conditions"`
+	Conditions Conditions `json:"conditions"`
 	//Kube-apiserver access address in the cluster
-	Endpoints	Endpoints	`json:"endpoints"`
+	Endpoints Endpoints `json:"endpoints"`
 }
 type Conditions struct {
 	//The type of component
-	Type   string `json:"type"`
+	Type string `json:"type"`
 	//The state of the component
 	Status string `json:"status"`
 	//The reason that the component becomes current
@@ -97,9 +101,11 @@ func (r commonResult) Extract() (*Clusters, error) {
 	err := r.ExtractInto(&s)
 	return &s, err
 }
+
 type commonResult struct {
 	golangsdk.Result
 }
+
 // CreateResult represents the result of a create operation. Call its Extract
 // method to interpret it as a Cluster.
 type CreateResult struct {

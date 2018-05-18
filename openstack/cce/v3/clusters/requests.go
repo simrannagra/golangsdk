@@ -2,7 +2,6 @@ package clusters
 
 import "github.com/huaweicloud/golangsdk"
 
-
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
 	MoreHeaders: map[string]string{"Content-Type": "application/json"},
 }
@@ -16,22 +15,23 @@ type CreateOptsBuilder interface {
 // CreateOpts contains all the values needed to create a new cluster
 type CreateOpts struct {
 	// API type, fixed value Cluster
-	Kind 		string 		`json:"kind" required:"true"`
+	Kind string `json:"kind" required:"true"`
 	//API version, fixed value v3
-	ApiVersion  string 		`json:"apiversion" required:"true"`
+	ApiVersion string `json:"apiversion" required:"true"`
 	//Medata required to create a cluster
-	Metadata   CreateMetaData	`json:"metadata" required:"true"`
+	Metadata CreateMetaData `json:"metadata" required:"true"`
 	//specifications to create a cluster
-	Spec		Spec	`json:"spec" required:"true"`
+	Spec Spec `json:"spec" required:"true"`
 }
+
 //Medata required to create a cluster
 type CreateMetaData struct {
 	//Cluster unique name
-	Name 			string 					`json:"name" required:"true"`
+	Name string `json:"name" required:"true"`
 	// Cluster tag, key/value pair format
-	Labels 			[]map[string]string  	`json:"labels,omitempty"`
+	Labels []map[string]string `json:"labels,omitempty"`
 	//Cluster annotation, key/value pair format
-	Annotations		[]map[string]string		`json:"annotations,omitempty"`
+	Annotations []map[string]string `json:"annotations,omitempty"`
 }
 
 // ToClusterCreateMap builds a create request body from CreateOpts.
@@ -51,17 +51,20 @@ func Create(c *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateResult)
 	_, r.Err = c.Post(rootURL(c), b, &r.Body, reqOpt)
 	return
 }
+
 type UpdateOpts struct {
-	Spec		UpdateSpec	`json:"spec" required:"true"`
+	Spec UpdateSpec `json:"spec" required:"true"`
 }
 type UpdateSpec struct {
 	Description string `json:"description,omitempty"`
 }
+
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
 type UpdateOptsBuilder interface {
 	ToClusterUpdateMap() (map[string]interface{}, error)
 }
+
 // ToClusterUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToClusterUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
