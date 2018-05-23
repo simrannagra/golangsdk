@@ -28,6 +28,32 @@ func TestGetV3Cluster(t *testing.T) {
 
 }
 
+func TestListV3Cluster(t *testing.T) {
+
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/api/v3/projects/c59fd21fd2a94963b822d8985b884673/clusters", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "GET")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, ListOutput)
+	})
+
+	//count := 0
+
+	actual, err := clusters.List(fake.ServiceClient()).ExtractCluster(clusters.ListOpts{})
+	if err != nil {
+		t.Errorf("Failed to extract clusters: %v", err)
+	}
+
+	expected := ListExpected
+
+	th.AssertDeepEquals(t, expected, actual)
+}
 func TestCreateV3Cluster(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
@@ -71,7 +97,7 @@ func TestCreateV3Cluster(t *testing.T) {
 		Spec: clusters.Spec{Type: "VirtualMachine",
 			Flavor:  "cce.s1.small",
 			Version: "v1.7.3-r10",
-			HostNetwok: clusters.HostNetwokSpec{
+			HostNetwork: clusters.HostNetworkSpec{
 				VpcId:    "3305eb40-2707-4940-921c-9f335f84a2ca",
 				SubnetId: "00e41db7-e56b-4946-bf91-27bb9effd664"},
 			ContainerNetwork: clusters.ContainerNetworkSpec{Mode: "overlay_l2"},
@@ -113,7 +139,7 @@ func TestUpdateV3Cluster(t *testing.T) {
 	th.AssertDeepEquals(t, expected, actual)
 }
 
-func TestDeleteVpc(t *testing.T) {
+func TestDeleteV3Cluster(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
