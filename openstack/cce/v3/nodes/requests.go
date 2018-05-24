@@ -5,12 +5,11 @@ import (
 	"reflect"
 )
 
-
 type ListOpts struct {
-	Name     string `json:"name"`
-	Uid      string `json:"uid"`
+	Name string `json:"name"`
+	Uid  string `json:"uid"`
 	//Labels   string `json:"labels"`
-	Phase    string `json:"phase"`
+	Phase string `json:"phase"`
 }
 
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
@@ -33,7 +32,6 @@ func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
 	return r
 }
 
-
 func Get(c *golangsdk.ServiceClient, clusterid string, nodeid string) (r GetResult) {
 	_, r.Err = c.Get(resourceURL(c, clusterid, nodeid), &r.Body, nil)
 	return
@@ -46,14 +44,14 @@ func FilterNodes(nodes []Items, opts ListOpts) ([]Items, error) {
 	m := map[string]FilterMetadata{}
 
 	if opts.Name != "" {
-		m["Name"] = FilterMetadata{Value:opts.Name, Driller:[]string{"Metadata"}}
+		m["Name"] = FilterMetadata{Value: opts.Name, Driller: []string{"Metadata"}}
 	}
 	if opts.Uid != "" {
-		m["Uid"] = FilterMetadata{Value:opts.Uid, Driller:[]string{"Metadata"}}
+		m["Uid"] = FilterMetadata{Value: opts.Uid, Driller: []string{"Metadata"}}
 	}
 
 	if opts.Phase != "" {
-		m["Phase"] = FilterMetadata{Value:opts.Phase, Driller:[]string{"Status"}}
+		m["Phase"] = FilterMetadata{Value: opts.Phase, Driller: []string{"Status"}}
 	}
 
 	if len(m) > 0 && len(nodes) > 0 {
@@ -83,16 +81,12 @@ func GetStructNestedField(v *Items, field string, structDriller []string) string
 	for _, drillField := range structDriller {
 		f := reflect.Indirect(r).FieldByName(drillField).Interface()
 		r = reflect.ValueOf(f)
-		}
+	}
 	f1 := reflect.Indirect(r).FieldByName(field)
 	return string(f1.String())
 }
 
-
-
-type FilterMetadata struct{
-	Value     string
-	Driller    []string
+type FilterMetadata struct {
+	Value   string
+	Driller []string
 }
-
-

@@ -7,10 +7,7 @@ import (
 	th "github.com/huaweicloud/golangsdk/testhelper"
 	"net/http"
 	"testing"
-
 )
-
-
 
 func TestListNode(t *testing.T) {
 	th.SetupHTTP()
@@ -73,7 +70,7 @@ func TestListNode(t *testing.T) {
 	})
 
 	listNodes := nodes.ListOpts{Name: "test-node-1234"}
-	actual,err := nodes.List(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926").ExtractNode(listNodes)
+	actual, err := nodes.List(fake.ServiceClient(), "cec124c2-58f1-11e8-ad73-0255ac101926").ExtractNode(listNodes)
 
 	if err != nil {
 		t.Errorf("Failed to extract nodes: %v", err)
@@ -84,24 +81,23 @@ func TestListNode(t *testing.T) {
 			Kind:       "Host",
 			Apiversion: "v3",
 			Metadata: nodes.Metadata{Name: "test-node-1234",
-				Uid: "b99acd73-5d7c-11e8-8e76-0255ac101929",
+				Uid:               "b99acd73-5d7c-11e8-8e76-0255ac101929",
 				CreationTimestamp: "2018-05-22 04:58:10.605829241 +0000 UTC",
-				UpdateTimestamp: "2018-05-22 05:02:26.528912685 +0000 UTC"},
+				UpdateTimestamp:   "2018-05-22 05:02:26.528912685 +0000 UTC"},
 			Spec: nodes.Spec{Az: "cn-east-2a",
-				Login: nodes.Login{SshKey: "c2c-keypair"},
-				RootVolume: nodes.Volume{Size: 40, Volumetype: "SATA"},
+				Login:       nodes.Login{SshKey: "c2c-keypair"},
+				RootVolume:  nodes.Volume{Size: 40, Volumetype: "SATA"},
 				BillingMode: 0,
 				DataVolumes: []nodes.Volume{
 					{
 						Volumetype: "SATA",
 						Size:       100,
-					},},
+					}},
 				Flavor: "s1.medium",
 			},
 			Status: nodes.Status{Phase: "Active", ServerID: "41748e56-33d4-46a1-aa57-2c8c29907995", PrivateIP: "192.168.0.3"},
 		},
 	}
-
 
 	th.AssertDeepEquals(t, expected, actual)
 }
