@@ -24,6 +24,7 @@ const Output = `{
         ]
 }
 }`
+
 /*
 var Expected = &nodes.Node{
 	Kind:       "Host",
@@ -47,4 +48,5 @@ var Expected = &nodes.Node{
 		},
 	},
 }
+
 */

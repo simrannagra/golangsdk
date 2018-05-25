@@ -5,12 +5,14 @@ import (
 	"github.com/huaweicloud/golangsdk/pagination"
 )
 
+//Describes the Node Structure of cluster
 type Node struct {
 	Kind       string  `json:"kind"`
 	Apiversion string  `json:"apiVersion"`
 	Items      []Items `json:"items"`
 }
 
+//Individual nodes of the cluster
 type Items struct {
 	Kind       string   `json:"kind"`
 	Apiversion string   `json:"apiVersion"`
@@ -19,6 +21,7 @@ type Items struct {
 	Status     Status   `json:"status"`
 }
 
+// Name, Status of the node
 type Metadata struct {
 	Name              string `json:"name"`
 	Uid               string `json:"uid"`
@@ -28,6 +31,7 @@ type Metadata struct {
 	Annotations       string `json:"annotations"`
 }
 
+// Describes Nodes specification
 type Spec struct {
 	Type        string   `json:"type"`
 	Az          string   `json:"az"`
@@ -35,12 +39,13 @@ type Spec struct {
 	RootVolume  Volume   `json:"rootVolume"`
 	DataVolumes []Volume `json:"dataVolumes"`
 	PublicIP    PublicIP `json:"publicIP"`
-	Count       int32    `json:"count"`
+	Count       int      `json:"count"`
 	ExtendParam string   `json:"extendParam"`
 	Flavor      string   `json:"flavor"`
-	BillingMode int32    `json:"billingMode"`
+	BillingMode int      `json:"billingMode"`
 }
 
+//Gives the current status of the node
 type Status struct {
 	Phase     string `json:"phase"`
 	ServerID  string `json:"ServerID"`
@@ -54,15 +59,16 @@ type Login struct {
 	SshKey string `json:"sshKey"`
 }
 
+//Used by Root Volume and Data Volumes
 type Volume struct {
-	Size        int32  `json:"size"`
+	Size        int    `json:"size"`
 	Volumetype  string `json:"volumetype"`
 	ExtendParam string `json:"extendParam"`
 }
 
 type PublicIP struct {
 	Ids   []string `json:"ids"`
-	Count int32    `json:"count"`
+	Count int      `json:"count"`
 	Eip   Eip      `json:"eip"`
 }
 
@@ -73,7 +79,7 @@ type Eip struct {
 
 type Bandwidth struct {
 	Chargemode string `json:"chargemode"`
-	Size       int32  `json:"size"`
+	Size       int    `json:"size"`
 	Sharetype  string `json:"sharetype"`
 }
 
@@ -100,10 +106,6 @@ func (r commonResult) ExtractNode(opts ListOpts) ([]Items, error) {
 
 type NodePage struct {
 	pagination.LinkedPageBase
-}
-
-type GetResult struct {
-	commonResult
 }
 
 type ListResult struct {

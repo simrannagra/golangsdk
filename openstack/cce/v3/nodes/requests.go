@@ -6,9 +6,8 @@ import (
 )
 
 type ListOpts struct {
-	Name string `json:"name"`
-	Uid  string `json:"uid"`
-	//Labels   string `json:"labels"`
+	Name  string `json:"name"`
+	Uid   string `json:"uid"`
 	Phase string `json:"phase"`
 }
 
@@ -20,7 +19,7 @@ var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
 // clusters. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
 //
-// Default policy settings return only those clusters that are owned by the
+// Default policy settings return only those nodes that in the cluster and are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
 
@@ -32,10 +31,7 @@ func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
 	return r
 }
 
-func Get(c *golangsdk.ServiceClient, clusterid string, nodeid string) (r GetResult) {
-	_, r.Err = c.Get(resourceURL(c, clusterid, nodeid), &r.Body, nil)
-	return
-}
+//Filters the node based on below paramaters
 func FilterNodes(nodes []Items, opts ListOpts) ([]Items, error) {
 
 	var refinedNodes []Items
@@ -63,7 +59,6 @@ func FilterNodes(nodes []Items, opts ListOpts) ([]Items, error) {
 					matched = false
 				}
 			}
-
 			if matched {
 				refinedNodes = append(refinedNodes, nodes)
 			}
@@ -86,6 +81,8 @@ func GetStructNestedField(v *Items, field string, structDriller []string) string
 	return string(f1.String())
 }
 
+//structure defind , which is used in GetStructNestedField, since the filter is based on
+// different key value pairs.
 type FilterMetadata struct {
 	Value   string
 	Driller []string
