@@ -12,68 +12,72 @@ var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
-
 type CreateOpts struct {
-	Kind       string       `json:"kind" required:"true"`
-	Apiversion string       `json:"apiversion" required:"true"`
-	Metadata   MetadataOpts `json:"metadata" required:"true"`
-	Spec       SpecOpts     `json:"spec" required:"true"`
-	//Status     ListStatus    `json:"status"`
+	// API type, fixed value Node
+	Kind string `json:"kind" required:"true"`
+	//API version, fixed value v3
+	ApiVersion string `json:"apiversion" required:"true"`
+	//Medata required to create a Node
+	Metadata CreateMetaData `json:"metadata"`
+	//specifications to create a Node
+	Spec Spec `json:"spec" required:"true"`
 }
-type MetadataOpts struct {
-	Name        string              `json:"name" required:"true"`
-	Labels      []map[string]string `json:"labels,omitempty"`
-	Annotations []map[string]string `json:"annotations,omitempty"`
+//Medata required to create a Node
+type CreateMetaData struct {
+	//Node name
+	Name string `json:"name,omitempty"`
+	// Node tag, key/value pair format
+	Labels map[string]string `json:"labels,omitempty"`
+	//Node annotation, key/value pair format
+	Annotations map[string]string `json:"annotations,omitempty"`
 }
-type SpecOpts struct {
-	Flavor      string           `json:"flavor" required:"true"`
-	Az          string           `json:"az" required:"true"`
-	Login       LoginOpts        `json:"login" required:"true"`
-	RootVolume  VolumeOpts       `json:"rootVolume,omitempty" required:"true"`
-	DataVolumes []VolumeDataOpts `json:"dataVolumes" required:"true"`
-	PublicIP    PublicIPOpts     `json:"publicIP"`
-	BillingMode int              `json:"billingMode"`
-	Count       int              `json:"count" required:"true"`
-	ExtendParam []string         `json:"extendParam"`
+
+type Spec struct {
+	// Node specifications
+	Flavor 		  string 			`json:"flavor" required:"true"`
+	Az 			  string 			`json:"az"  required:"true"`
+	Login   	  LoginSpec			`json:"login" required:"true"`
+	RootVolume 	  VolumeSpec 		`json:"rootVolume" required:"true"`
+	DataVolumes []VolumeSpec 		`json:"dataVolumes" required:"true"`
+	PublicIP	  PublicIPSpec 		`json:"publicIP,omitempty"`
+	BillingMode   int 				`json:"billingMode ,omitempty"`
+	Count         int				`json:"count" required:"true"`
+	ExtendParam   string 			`json:"extendParam ,omitempty"`
 }
-type LoginOpts struct {
-	SshKey string `json:"sshKey,omitempty" required:"true"`
+type LoginSpec struct {
+	SshKey   	string 		`json:"sshKey" required:"true"`
 }
-type VolumeOpts struct {
-	Size        int      `json:"size" required:"true"`
-	Volumetype  string   `json:"volumetype" required:"true"`
-	ExtendParam []string `json:"extendParam,omitempty"`
+type VolumeSpec struct {
+	Size 			int 	`json:"size" required:"true"`
+	VolumeType 		string 	`json:"volumetype" required:"true"`
+	ExtendParam   	string 	`json:"extendParam ,omitempty"`
 }
-type VolumeDataOpts struct {
-	Size        int    `json:"size" required:"true"`
-	Volumetype  string `json:"volumetype" required:"true"`
-	ExtendParam string `json:"extendParam,omitempty"`
+type PublicIPSpec struct {
+	Ids   []string  `json:"ids ,omitempty"`
+	Count int       `json:"count ,omitempty"`
+	Eip   EipSpec   `json:"eip, omitempty"`
 }
-type PublicIPOpts struct {
-	Ids   string  `json:"ids"`
-	Count int     `json:"count"`
-	Eip   EipOpts `json:"eip"`
-}
-type EipOpts struct {
-	IpType    string        `json:"iptype" required:"true"`
-	Bandwidth BandwidthOpts `json:"bandwidth" required:"true"`
+type EipSpec struct {
+	IpType 		string 			`json:"iptype" required:"true"`
+	Bandwidth 	BandwidthOpts 	`json:"bandwidth" required:"true"`
 }
 type BandwidthOpts struct {
-	ChargeMode string `json:"chargemode"`
-	Size       int    `json:"size" required:"true"`
-	ShareType  string `json:"sharetype" required:"true"`
+	ChargeMode 	string 		`json:"chargemode ,omitempty"`
+	Size 		int         `json:"size" required:"true"`
+	ShareType 	string 		`json:"sharetype" required:"true"`
+}
+
+
+// Create accepts a CreateOpts struct and uses the values to create a new
+// logical Node. When it is created, the Node does not have an internal
+// interface
+//
+type CreateOptsBuilder interface {
+	ToNodeCreateMap() (map[string]interface{}, error)
 }
 
 func (opts CreateOpts) ToNodeCreateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "")
-}
-
-// Create accepts a CreateOpts struct and uses the values to create a new
-// logical routes. When it is created, the routes does not have an internal
-// interface - it is not associated to any routes.
-//
-type CreateOptsBuilder interface {
-	ToNodeCreateMap() (map[string]interface{}, error)
 }
 
 func Create(c *golangsdk.ServiceClient, clusterid string, opts CreateOptsBuilder) (r CreateResult) {
@@ -95,21 +99,6 @@ func Get(c *golangsdk.ServiceClient, clusterid, nodeid string) (r GetResult) {
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
 	return
-}
-
-type ListOpts struct {
-	Kind       string     `json:"kind"`
-	Apiversion string     `json:"apiversion"`
-	Items      CreateOpts `json:"items"`
-}
-type ListStatus struct {
-	Phase     string `json:"phase"`
-	ServerId  string `json:"serverId"`
-	PublicIP  string `json:"publicIP"`
-	PrivateIP string `json:"privateIP"`
-	JobID     string `json:"jobID"`
-	Reason    string `json:"reason"`
-	Message   string `json:"message"`
 }
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
@@ -151,14 +140,5 @@ func Delete(c *golangsdk.ServiceClient, clusterid, nodeid string) (r DeleteResul
 		OkCodes:     []int{200},
 		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
 	})
-	return
-}
-func List(client *golangsdk.ServiceClient, clusteruuid string) (r ListResult) {
-
-	_, r.Err = client.Get(rootURL(client, clusteruuid), &r.Body, &golangsdk.RequestOpts{
-		OkCodes:     []int{200},
-		MoreHeaders: RequestOpts.MoreHeaders, JSONBody: nil,
-	})
-
 	return
 }

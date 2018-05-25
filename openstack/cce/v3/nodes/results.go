@@ -1,86 +1,74 @@
 package nodes
 import (
 	"github.com/huaweicloud/golangsdk"
-	"github.com/huaweicloud/golangsdk/pagination"
+	//"github.com/huaweicloud/golangsdk/pagination"
 )
 
-type Node struct {
-	Kind       string `json:"kind"`
-	Apiversion string `json:"apiversion"`
-	Metadata   MetadataOpts   `json:"metadata" required:"true"`
-	Spec   		SpecOpts    `json:"spec"`
-	Status   		StatusOpts    `json:"status" required:"true"`
+type Nodes struct {
+	Kind      	string 		`json:"kind"`
+	Apiversion 	string 		`json:"apiversion"`
+	Metadata  	Metadata   	`json:"metadata"`
+	Spec   		Spec    	`json:"spec"`
+	Status   	Status  	`json:"status"`
 }
-type StatusOpts struct {
+
+type Metadata struct {
+	//Node unique id
+	//Id string `json:"uid"`
+	Id string
+	//var Id = "cec124c2-58f1-11e8-ad73-0255ac101926" "cf4bc001-58f1-11e8-ad73-0255ac101926"
+	//Node  name
+	Name string `json:"name"`
+	// Node tag, key/value pair format
+	Labels map[string]string `json:"labels"`
+	//Node annotation, key/value pair format
+	Annotations map[string]string `json:"annotations"`
+}
+
+type Status struct {
+	//The state of the Node
+	Phase string `json:"phase"`
+	//The ID of the Job that is operating asynchronously in the Node
 	JobID string `json:"jobID"`
+	//Reasons for the Node to become current
+	Reason string `json:"reason"`
+	//The status of each component in the Node
+	Conditions Conditions `json:"conditions"`
+
 }
-// NodePage is the page returned by a pager when traversing over a
-// collection of vpcs.
-type NodePage struct {
-	pagination.LinkedPageBase
+type Conditions struct {
+	//The type of component
+	Type string `json:"type"`
+	//The state of the component
+	Status string `json:"status"`
+	//The reason that the component becomes current
+	Reason string `json:"reason"`
 }
 
-// NextPageURL is invoked when a paginated collection of vpcs has reached
-// the end of a page and the pager seeks to traverse over a new one. In order
-// to do this, it needs to construct the next page's URL.
-func (r NodePage) NextPageURL() (string, error) {
-	var s struct {
-		Links []golangsdk.Link `json:""`
-	}
+// Extract is a function that accepts a result and extracts a Node.
+func (r commonResult) Extract() (*Nodes, error) {
+	var s Nodes
 	err := r.ExtractInto(&s)
-	if err != nil {
-		return "", err
-	}
-	return golangsdk.ExtractNextURL(s.Links)
-}
-
-// IsEmpty checks whether a NodePage struct is empty.
-func (r NodePage) IsEmpty() (bool, error) {
-	is, err := ExtractNodes(r)
-	return len(is) == 0, err
-}
-
-// ExtractNodes accepts a Page struct, specifically a NodePage struct,
-// and extracts the elements into a slice of Vpc structs. In other words,
-// a generic collection is mapped into a relevant slice.
-func ExtractNodes(r pagination.Page) ([]Node, error) {
-	var s struct {
-		Nodes []Node `json:""`
-	}
-	err := (r.(NodePage)).ExtractInto(&s)
-	return s.Nodes, err
-}
-// Extract is a function that accepts a result and extracts a vpc.
-func (r commonResult) Extract() (*Node, error) {
-	var s Node
-	err := r.ExtractInto(&s)
-	return &s, err
-}
-/*func (r GetResult) Extract() (*Node, error) {
-	var s Node
-	err := r.ExtractInto(&s)
+	s.Metadata.Id="12345678899009767900865432246"
 	return &s, err
 }
 
-func (r GetResult) ExtractInto(v interface{}) error {
-	return r.Result.ExtractIntoStructPtr(v, "")
-}*/
 type commonResult struct {
 	golangsdk.Result
 }
 
 // CreateResult represents the result of a create operation. Call its Extract
-// method to interpret it as a Vpc.
+// method to interpret it as a Node.
 type CreateResult struct {
 	commonResult
 }
 // GetResult represents the result of a get operation. Call its Extract
-// method to interpret it as a Vpc.
+// method to interpret it as a Node.
 type GetResult struct {
 	commonResult
 }
 // UpdateResult represents the result of an update operation. Call its Extract
-// method to interpret it as a Vpc.
+// method to interpret it as a Node.
 type UpdateResult struct {
 	commonResult
 }
@@ -90,16 +78,4 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-func (r commonResult) ExtractNode(opts ListOpts) ([]Node, error) {
-	var s []Node
-	err := r.ExtractInto(&s)
-	if err!= nil{
-		return nil,err
-	}
-	return s, err
-}
 
-
-type ListResult struct {
-	commonResult
-}

@@ -499,14 +499,6 @@ func NewAntiDDoSV2(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) 
 	sc.ResourceBase = sc.Endpoint + "v2/" + client.ProjectID + "/"
 	return sc, err
 }
-/*func NewCCEHWV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
-	sc, err := initClientOpts(client, eo, "orchestration")
-	sc.Endpoint = strings.Replace(sc.Endpoint, "rts", "cce", 1)
-	sc.Endpoint = strings.Replace(sc.Endpoint, "v1", "api/v3/projects", 1)
-	sc.ResourceBase = sc.Endpoint
-	sc.Type = "cce"
-	return sc, err
-}*/
 
 func NewCCEHWV1(client *golangsdk.ProviderClient, eo golangsdk.EndpointOpts) (*golangsdk.ServiceClient, error) {
 	sc, err := initClientOpts(client, eo, "compute")
