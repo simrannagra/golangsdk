@@ -5,9 +5,12 @@ import (
 )
 
 type ListClusterResponse struct {
-	Kind       string     `json:"kind"`
-	ApiVersion string     `json:"apiVersion"`
-	Clusters   []Clusters `json:"items"`
+	// API type, fixed value Cluster
+	Kind string `json:"kind"`
+	//API version, fixed value v3
+	ApiVersion string `json:"apiVersion"`
+	//all Clusters
+	Clusters []Clusters `json:"items"`
 }
 
 type Clusters struct {
@@ -23,7 +26,7 @@ type Clusters struct {
 	Status Status `json:"status"`
 }
 
-//Medata required to create a cluster
+//Metadata required to create a cluster
 type MetaData struct {
 	//Cluster unique name
 	Name string `json:"name"`

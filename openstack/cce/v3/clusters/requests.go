@@ -142,10 +142,12 @@ func Get(c *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
+// UpdateOpts contains all the values needed to update a new cluster
 type UpdateOpts struct {
 	Spec UpdateSpec `json:"spec" required:"true"`
 }
 type UpdateSpec struct {
+	//Cluster description
 	Description string `json:"description,omitempty"`
 }
 
