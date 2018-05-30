@@ -13,13 +13,13 @@ var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
 // the API. Filtering is achieved by passing in struct field values that map to
 // the floating IP attributes you want to see returned.
 type ListOpts struct {
-	Name   string `json:"name"`
-	ID     string `json:"uuid"`
-	AZ     string `json:"az"`
-	Type   string `json:"clustertype"`
-	VPC    string `json:"vpc"`
-	VpcId  string `json:"vpcid"`
-	Status string `json:"status"`
+	Name    string `json:"name"`
+	ID      string `json:"uuid"`
+	AZ      string `json:"az"`
+	Type    string `json:"clustertype"`
+	VpcName string `json:"vpc"`
+	VpcId   string `json:"vpcid"`
+	Status  string `json:"status"`
 }
 
 // List returns collection of
@@ -41,37 +41,29 @@ func List(client *golangsdk.ServiceClient) (r ListResult) {
 func FilterClusters(clusters []RetrievedCluster, opts ListOpts) ([]RetrievedCluster, error) {
 
 	var refinedClusters []RetrievedCluster
-	var clusfield string
 	var matched bool
-	m := map[string]interface{}{}
+	m := map[string]FilterStruct{}
 
 	if opts.Name != "" {
-		clusfield = "Metadata"
-		m["Name"] = opts.Name
+		m["Name"] = FilterStruct{Value: opts.Name, Driller: []string{"Metadata"}}
 	}
 	if opts.ID != "" {
-		clusfield = "Metadata"
-		m["ID"] = opts.ID
+		m["ID"] = FilterStruct{Value: opts.ID, Driller: []string{"Metadata"}}
 	}
 	if opts.AZ != "" {
-		clusfield = "Clusterspec"
-		m["AZ"] = opts.AZ
+		m["AZ"] = FilterStruct{Value: opts.AZ, Driller: []string{"Clusterspec"}}
 	}
 	if opts.Type != "" {
-		clusfield = "Clusterspec"
-		m["ClusterType"] = opts.Type
-	}
-	if opts.VPC != "" {
-		clusfield = "Clusterspec"
-		m["VPC"] = opts.VPC
+		m["ClusterType"] = FilterStruct{Value: opts.Type, Driller: []string{"Clusterspec"}}
 	}
 	if opts.VpcId != "" {
-		clusfield = "Clusterspec"
-		m["VpcId"] = opts.VpcId
+		m["VpcId"] = FilterStruct{Value: opts.VpcId, Driller: []string{"Clusterspec"}}
+	}
+	if opts.VpcName != "" {
+		m["VpcName"] = FilterStruct{Value: opts.VpcName, Driller: []string{"Clusterspec"}}
 	}
 	if opts.Status != "" {
-		clusfield = "ClusterStatus"
-		m["Status"] = opts.Status
+		m["Status"] = FilterStruct{Value: opts.Status, Driller: []string{"ClusterStatus"}}
 	}
 
 	if len(m) > 0 && len(clusters) > 0 {
@@ -79,16 +71,13 @@ func FilterClusters(clusters []RetrievedCluster, opts ListOpts) ([]RetrievedClus
 			matched = true
 
 			for key, value := range m {
-
-				if sVal := getStructNestedField(&cluster, clusfield, key); !(sVal == value) {
+				if sVal := GetStructNestedField(&cluster, key, value.Driller); !(sVal == value.Value) {
 					matched = false
 				}
 			}
-
 			if matched {
 				refinedClusters = append(refinedClusters, cluster)
 			}
-
 		}
 
 	} else {
@@ -98,11 +87,18 @@ func FilterClusters(clusters []RetrievedCluster, opts ListOpts) ([]RetrievedClus
 	return refinedClusters, nil
 }
 
-func getStructNestedField(v *RetrievedCluster, clusfield string, field string) string {
+type FilterStruct struct {
+	Value   string
+	Driller []string
+}
+
+func GetStructNestedField(v *RetrievedCluster, field string, structDriller []string) string {
 	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(clusfield).Interface()
-	r1 := reflect.ValueOf(f)
-	f1 := reflect.Indirect(r1).FieldByName(field)
+	for _, drillField := range structDriller {
+		f := reflect.Indirect(r).FieldByName(drillField).Interface()
+		r = reflect.ValueOf(f)
+	}
+	f1 := reflect.Indirect(r).FieldByName(field)
 	return string(f1.String())
 }
 

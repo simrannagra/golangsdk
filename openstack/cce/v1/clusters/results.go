@@ -19,7 +19,7 @@ type ClusterlistSpec struct {
 	AZ               string          `json:"az"`
 	CPU              int             `json:"cpu"`
 	Memory           int             `json:"memory"`
-	VPC              string          `json:"vpc"`
+	VpcName          string          `json:"vpc"`
 	VpcId            string          `json:"vpcid"`
 	Subnet           string          `json:"subnet"`
 	Endpoint         string          `json:"endpoint"`

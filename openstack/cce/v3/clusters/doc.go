@@ -5,7 +5,7 @@ Cluster service.
 Example to List Clusters
 
 	listOpts:=clusters.ListOpts{}
-	allClusters,err1:=clusters.List(client,listOpts).Extract()
+	allClusters,err:=clusters.List(client).ExtractCluster(listOpts)
 	if err != nil {
 		panic(err)
 	}
