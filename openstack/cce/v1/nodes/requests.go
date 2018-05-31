@@ -71,14 +71,22 @@ func Delete(c *golangsdk.ServiceClient, clusteruuid string, opts RemoveOpts) (r 
 type ListOpts struct {
 	Name 	string     `json:"name"`
 	ID 		string     `json:"uuid"`
-
+	SpaceID string 		`json:"spaceuuid"`
+	Flavor string   	`json:"flavor"`
+	AZ		string   	`json:"az"`
+	SSHKey  string   	`json:"sshkey"`
+	Clusteruuid string `json:"clusteruuid"`
+	Clustername string `json:"clustername"`
+	Privateip   string `json:"privateip"`
+	Publicip    string `json:"publicip"`
+	Status   string   	`json:"status"`
 }
 
 // List returns collection of
-// clusters. It accepts a ListOpts struct, which allows you to filter and sort
+// nodes. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
 //
-// Default policy settings return only those clusters that are owned by the
+// Default policy settings return only those nodes that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, clusteruuid string) (r ListResult) {
 
@@ -92,17 +100,47 @@ func List(client *golangsdk.ServiceClient, clusteruuid string) (r ListResult) {
 func FilterNodes(nodes []Hostlist, opts ListOpts) ([]Hostlist, error) {
 
 	var refinedNodes []Hostlist
-	var  clusfield string
 	var matched bool
-	m := map[string]interface{}{}
+
+	m := map[string]FilterMetadata{}
 
 	if opts.Name != "" {
-		clusfield="Metadata"
-		m["Name"] = opts.Name
+		m["Name"] = FilterMetadata{Value: opts.Name, Driller: []string{"Metadata"},IsDrill:true}
 	}
-	if opts.ID != "" {
-		clusfield="Metadata"
-		m["ID"] = opts.ID
+		if opts.ID != "" {
+		m["ID"] = FilterMetadata{Value: opts.ID, Driller: []string{"Metadata"},IsDrill:true}
+	}
+
+	if opts.Flavor != "" {
+		m["Flavor"] = FilterMetadata{Value: opts.Flavor, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+
+	if opts.AZ != "" {
+		m["AZ"] = FilterMetadata{Value: opts.AZ, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+	if opts.SSHKey != "" {
+		m["SSHKey"] = FilterMetadata{Value: opts.SSHKey, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+	if opts.Clusteruuid != "" {
+		m["Clusteruuid"] = FilterMetadata{Value: opts.Clusteruuid, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+
+	if opts.Clustername != "" {
+		m["Clustername"] = FilterMetadata{Value: opts.Clustername, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+	if opts.Privateip != "" {
+		m["Privateip"] = FilterMetadata{Value: opts.Privateip, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+	if opts.Publicip != "" {
+		m["Publicip"] = FilterMetadata{Value: opts.Publicip, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+
+	if opts.SpaceID != "" {
+		m["SpaceID"] = FilterMetadata{Value: opts.SpaceID, Driller: []string{"Hostspec"},IsDrill:true}
+	}
+
+	if opts.Status != "" {
+		m["Status"] = FilterMetadata{Value: opts.Status, Driller: []string{"Status"},IsDrill:false}
 	}
 
 	if len(m) > 0 && len(nodes) > 0 {
@@ -111,7 +149,7 @@ func FilterNodes(nodes []Hostlist, opts ListOpts) ([]Hostlist, error) {
 
 			for key, value := range m {
 
-				if sVal := getStructNestedField(&node, clusfield, key); !(sVal == value) {
+				if sVal := GetStructNestedField(&node, key, value.Driller, value.IsDrill); !(sVal == value.Value) {
 					matched = false
 				}
 			}
@@ -129,11 +167,21 @@ func FilterNodes(nodes []Hostlist, opts ListOpts) ([]Hostlist, error) {
 	return refinedNodes, nil
 }
 
-func getStructNestedField(v *Hostlist, clusfield string , field string) string {
+func GetStructNestedField(v *Hostlist, field string, structDriller []string, IsDrill bool) string {
 	r := reflect.ValueOf(v)
-	f := reflect.Indirect(r).FieldByName(clusfield).Interface()
-	r1 := reflect.ValueOf(f)
-	f1 := reflect.Indirect(r1).FieldByName(field)
+	if (IsDrill) {
+		for _, drillField := range structDriller {
+			f := reflect.Indirect(r).FieldByName(drillField).Interface()
+			r = reflect.ValueOf(f)
+		}
+	}
+	f1 := reflect.Indirect(r).FieldByName(field)
 	return string(f1.String())
 }
 
+
+type FilterMetadata struct {
+	Value   string
+	Driller []string
+	IsDrill bool
+}

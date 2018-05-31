@@ -9,6 +9,99 @@ import (
 	"testing"
 )
 
+func TestListNode(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc("/api/v1/clusters/d83af16b-febd-4e52-bfb0-20850072e2cd/hosts",
+		func(w http.ResponseWriter, r *http.Request) {
+			th.TestMethod(t, r, "GET")
+			th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, `{
+    "kind": "list",
+    "apiVersion": "v1",
+    "metadata": {},
+    "spec": {
+        "hostList": [
+            {
+                "kind": "host",
+                "apiVersion": "v1",
+                "metadata": {
+                    "name": "disha-test-node-1",
+                    "uuid": "bde99218-0317-4f5f-bd1c-d6eff10eb13a",
+                    "spaceuuid": "80f4acb2-6403-0c6a-1cf2-07d02ea708cc",
+                    "createAt": "2018-05-28 07:08:49.906325082 +0000 UTC",
+                    "updateAt": "2018-05-28 07:13:53"
+                },
+                "spec": {
+                    
+                    "flavor": "s1.medium",                   
+                    
+                    "az": "eu-de-02",
+                    "volume": [
+                        {
+                            "diskType": "root",
+                            "diskSize": 40,
+                            "volumeType": "SATA"
+                        },
+                        {
+                            "diskType": "data",
+                            "diskSize": 100,
+                            "volumeType": "SATA"
+                        }
+                    ],
+                    "sshkey": "KeyPair-niu"
+                    
+                },
+                
+                "status": "ACTIVE"
+            }
+        ]
+    }
+}`)
+
+		})
+
+	listNodes := nodes.ListOpts{} //Name: "c2c-test-cluster-node-1"}
+	//actual, err := nodes.List(fake.ServiceClient(), "38a61610-e91d-4669-b8ae-7fbc52776287").ExtractNode(listNodes)
+	actual, err := nodes.List(fake.ServiceClient(), "d83af16b-febd-4e52-bfb0-20850072e2cd").ExtractNode(listNodes)
+	if err != nil {
+		t.Errorf("Failed to extract nodes: %v", err)
+	}
+
+	expected := []nodes.Hostlist{
+		{
+			Kind:       "host",
+			ApiVersion: "v1",
+			Metadata: nodes.Metadata{Name: "disha-test-node-1",
+				ID:      "bde99218-0317-4f5f-bd1c-d6eff10eb13a",
+				SpaceID: "80f4acb2-6403-0c6a-1cf2-07d02ea708cc",
+			},
+			Hostspec: nodes.Spec{AZ: "eu-de-02", SSHKey: "KeyPair-niu",
+				Volume: []nodes.Volume{
+					{
+						DiskType:   "root",
+						DiskSize:   40,
+						VolumeType: "SATA",
+					},
+					{
+						DiskType:   "data",
+						DiskSize:   100,
+						VolumeType: "SATA",
+					}},
+				Flavor: "s1.medium",
+			},
+
+			Status: "ACTIVE",
+		},
+	}
+
+	th.AssertDeepEquals(t, expected, actual)
+}
+
 func TestGet(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()

@@ -31,7 +31,6 @@ type Spec struct {
 	Snat   bool              `json:"snat omitempty"`
 	AZ     string            `json:"az"`
 	Tags   map[string]string `json:"tags omitempty"`
-
 	Clusteruuid string `json:"clusteruuid"`
 	Clustername string `json:"clustername"`
 	Privateip   string `json:"privateip"`
@@ -39,6 +38,59 @@ type Spec struct {
 	Cpu         int    `json:"cpu"`
 	Memory      int    `json:"memory"`
 	Hostid      string `json:"hostid"`
+	Status      Status `json:"status"`
+}
+
+type Status struct {
+	Capacity        Fields          `json:"capacity"`
+	Allocatable     Fields          `json:"allocatable"`
+	Conditions      []Conditions    `json:"conditions"`
+	Addresses       []Addresses     `json:"addresses"`
+	DaemonEndpoints DaemonEndpoints `json:"daemonEndpoints"`
+	NodeInfo        NodeInfo        `json:"nodeInfo"`
+	Images          []Images        `json:"images"`
+}
+
+type Fields struct {
+	Cpu    string `json:"cpu"`
+	Memory string `json:"memory"`
+	Pods   string `json:"pods"`
+}
+
+type Conditions struct {
+	Type    string `json:"type"`
+	Status  string `json:"status"`
+	Reason  string `json:"reason"`
+	Message string `json:"message"`
+}
+
+type Addresses struct {
+	Type    string `json:"type"`
+	Address string `json:"address"`
+}
+
+type KubeletEndpoint struct {
+	Port int `json:"port"`
+}
+
+type DaemonEndpoints struct {
+	KubeletEndpoint KubeletEndpoint `json:"kubeletEndpoint"`
+}
+
+type NodeInfo struct {
+	MachineID               string `json:"machineID"`
+	SystemUUID              string `json:"systemUUID"`
+	BootID                  string `json:"bootID"`
+	KernelVersion           string `json:"kernelVersion"`
+	OsImage                 string `json:"osImage"`
+	ContainerRuntimeVersion string `json:"containerRuntimeVersion"`
+	KubeletVersion          string `json:"kubeletVersion"`
+	KubeProxyVersion        string `json:"kubeProxyVersion"`
+}
+
+type Images struct {
+	Names     []string `json:"names"`
+	SizeBytes int      `json:"sizeBytes"`
 }
 
 // NodePage is the page returned by a pager when traversing over a
@@ -93,22 +145,21 @@ type DeleteResult struct {
 	golangsdk.ErrResult
 }
 
-
 type RetrievedNode struct {
-	Kind 			string                   `json:"kind"`
-	ApiVersion 		string             `json:"apiVersion"`
-	Metadata 		Metadata             `json:"metadata"`
-	HostListSpec  	HostListSpec 		`json:"spec"`
+	Kind         string       `json:"kind"`
+	ApiVersion   string       `json:"apiVersion"`
+	Metadata     Metadata     `json:"metadata"`
+	HostListSpec HostListSpec `json:"spec"`
 }
 
 type HostListSpec struct {
 	HostList []Hostlist `json:"hostList"`
 }
 type Hostlist struct {
-	Kind       string  `json:"kind"`
-	ApiVersion string  `json:"apiVersion"`
+	Kind       string   `json:"kind"`
+	ApiVersion string   `json:"apiVersion"`
 	Metadata   Metadata `json:"metadata"`
-	Hostspec   Spec 	`json:"spec"`
+	Hostspec   Spec     `json:"spec"`
 	Replicas   int      `json:"replicas"`
 	Status     string   `json:"status"`
 }
@@ -117,12 +168,11 @@ type Hostlist struct {
 func (r commonResult) ExtractNode(opts ListOpts) ([]Hostlist, error) {
 	var s RetrievedNode
 	err := r.ExtractInto(&s)
-	if err!= nil{
-		return nil,err
+	if err != nil {
+		return nil, err
 	}
-	return FilterNodes(s.HostListSpec.HostList ,opts)
+	return FilterNodes(s.HostListSpec.HostList, opts)
 }
-
 
 type ListResult struct {
 	commonResult
