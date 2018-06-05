@@ -8,7 +8,88 @@ import (
 	fake "github.com/huaweicloud/golangsdk/testhelper/client"
 	"net/http"
 	"testing"
+	"time"
 )
+
+func TestCreate(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockCreateResponse(t)
+
+	options := &shares.CreateOpts{Size: 1, Name: "my_test_share", ShareProto: "NFS"}
+	n, err := shares.Create(client.ServiceClient(), options).Extract()
+
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, n.Name, "my_test_share")
+	th.AssertEquals(t, n.Size, 1)
+	th.AssertEquals(t, n.ShareProto, "NFS")
+}
+
+func TestDelete(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockDeleteResponse(t)
+
+	result := shares.Delete(client.ServiceClient(), shareID)
+	th.AssertNoErr(t, result.Err)
+}
+
+func TestUpdate(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockUpdateResponse(t)
+
+	options := &shares.UpdateOpts{DisplayName: "my_test_share_sfs", DisplayDescription: "test"}
+	n, err := shares.Update(client.ServiceClient(),shareID, options).Extract()
+
+	th.AssertNoErr(t, err)
+	th.AssertEquals(t, n.Name, "my_test_share_sfs")
+	th.AssertEquals(t, n.Description, "test")
+}
+
+func TestGet(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	MockGetResponse(t)
+
+	s, err := shares.Get(client.ServiceClient(), shareID).Extract()
+	th.AssertNoErr(t, err)
+	th.AssertDeepEquals(t, s, &shares.Share{
+		AvailabilityZone:   "nova",
+		ShareNetworkID:     "713df749-aac0-4a54-af52-10f6c991e80c",
+		SnapshotID:         "",
+		ID:                 shareID,
+		Size:               1,
+		ShareType:          "25747776-08e5-494f-ab40-a64b9d20d8f7",
+		ProjectID:          "16e1ab15c35a457e9c2b2aa189f544e1",
+		Metadata: map[string]string{
+			"project": "my_app",
+			"aim":     "doc",
+		},
+		Status:                   "available",
+		Description:              "My custom share London",
+		Host:                     "manila2@generic1#GENERIC1",
+		Name:                     "my_test_share",
+		CreatedAt:                time.Date(2015, time.September, 18, 10, 25, 24, 0, time.UTC),
+		ShareProto:               "NFS",
+		VolumeType:               "default",
+		IsPublic:                 true,
+		Links: []map[string]string{
+			{
+				"href": "http://172.18.198.54:8786/v2/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+				"rel":  "self",
+			},
+			{
+				"href": "http://172.18.198.54:8786/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+				"rel":  "bookmark",
+			},
+		},
+	})
+}
 
 func TestListAccessRights(t *testing.T) {
 	th.SetupHTTP()
