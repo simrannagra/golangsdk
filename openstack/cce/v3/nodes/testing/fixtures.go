@@ -25,28 +25,4 @@ const Output = `{
 }
 }`
 
-/*
-var Expected = &nodes.Node{
-	Kind:       "Host",
-	Apiversion: "v3",
-	Metadata:   nodes.Metadata{Name: "c2c-hostname"},
-	Spec: nodes.Spec{
-		Flavor: "s3.large.2",
-		Az:     "cn-east-2a",
-		Login: nodes.LoginSpec{
-			SshKey: "c2c-keypair",
-		},
-		RootVolume: nodes.VolumeSpec{
-			VolumeType: "SATA",
-			Size:       40,
-		},
-		DataVolumes: []nodes.VolumeSpec{
-			{
-				VolumeType: "SATA",
-				Size:       100,
-			},
-		},
-	},
-}
 
-*/

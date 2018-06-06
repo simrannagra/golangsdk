@@ -5,6 +5,7 @@ import (
 	"reflect"
 )
 
+// ListOpts allows the filtering of list data using given parameters.
 type ListOpts struct {
 	Name  string `json:"name"`
 	Uid   string `json:"uid"`
@@ -16,10 +17,10 @@ var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
 }
 
 // List returns collection of
-// clusters. It accepts a ListOpts struct, which allows you to filter and sort
+// Nodes. It accepts a ListOpts struct, which allows you to filter and sort
 // the returned collection for greater efficiency.
 //
-// Default policy settings return only those nodes that in the cluster and are owned by the
+// Default policy settings return only those nodes that are in the cluster and are owned by the
 // tenant who submits the request, unless an admin user submits the request.
 func List(client *golangsdk.ServiceClient, clusterID string) (r ListResult) {
 

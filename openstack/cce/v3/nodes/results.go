@@ -87,6 +87,7 @@ type commonResult struct {
 	golangsdk.Result
 }
 
+// Extract is a function that accepts a result and extracts a node.
 func (r commonResult) Extract() (*Node, error) {
 	var n struct {
 		Node *Node `json:"node"`
@@ -95,6 +96,8 @@ func (r commonResult) Extract() (*Node, error) {
 	return n.Node, err
 }
 
+// ExtractNode is a function that accepts a ListOpts struct, which allows you to filter and sort
+// the returned collection for greater efficiency.
 func (r commonResult) ExtractNode(opts ListOpts) ([]Items, error) {
 	var s Node
 	err := r.ExtractInto(&s)
@@ -108,6 +111,8 @@ type NodePage struct {
 	pagination.LinkedPageBase
 }
 
+// ListResult represents the result of a list operation. Call its Extract
+// method to interpret it as a Node.
 type ListResult struct {
 	commonResult
 }

@@ -29,6 +29,7 @@ func List(client *golangsdk.ServiceClient) (r ListResult) {
 	return
 }
 
+//Filters the cluster based on below paramaters
 func FilterClusters(clusters []Clusters, opts ListOpts) ([]Clusters, error) {
 
 	var refinedClusters []Clusters
