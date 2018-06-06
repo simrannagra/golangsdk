@@ -71,7 +71,7 @@ type CreateOpts struct {
 	// The UUID from which to create a share
 	SnapshotID string `json:"snapshot_id,omitempty"`
 	// Determines whether or not the share is public
-	IsPublic *bool `json:"is_public,omitempty"`
+	IsPublic bool `json:"is_public,omitempty"`
 	// Key value pairs of user defined metadata
 	Metadata map[string]string `json:"metadata,omitempty"`
 	// The UUID of the share network to which the share belongs to
@@ -103,18 +103,6 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
-
-// ListAccessRights lists all access rules assigned to a Share based on its id. To extract
-// the AccessRight slice from the response, call the Extract method on the ListAccessRightsResult.
-// Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
-func ListAccessRights(client *golangsdk.ServiceClient, id string) (r ListAccessRightsResult) {
-	requestBody := map[string]interface{}{"os-access_list": nil}
-	_, r.Err = client.Post(rootURL(client, id), requestBody, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
-}
-
 // Delete the Access Rule
 type DeleteAccessOptsBuilder interface {
 	ToDeleteAccessMap() (map[string]interface{}, error)
@@ -141,11 +129,11 @@ func DeleteAccess(client *golangsdk.ServiceClient, share_id string, opts DeleteA
 	})
 	return
 }
-	// Delete will delete an existing Share with the given UUID.
-	func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
-	return
-	}
+// Delete will delete an existing Share with the given UUID.
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+_, r.Err = client.Delete(resourceURL(client, id), nil)
+return
+}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
@@ -181,17 +169,27 @@ func Update(c *golangsdk.ServiceClient,id string, opts UpdateOptsBuilder) (r Upd
 	return
 }
 
-
-	//Gets the Mount/Export Locations of the SFS specified
-	func GetExportLocations(client *golangsdk.ServiceClient, id string) (r GetExportLocationsResult) {
-	client.Microversion="2.9"
-	_, r.Err = client.Get(getMountLocationsURL(client, id), &r.Body, nil)
-	return
-	}
+//Gets the Mount/Export Locations of the SFS specified
+func GetExportLocations(client *golangsdk.ServiceClient, id string) (r GetExportLocationsResult) {
+client.Microversion="2.9"
+_, r.Err = client.Get(getMountLocationsURL(client, id), &r.Body, nil)
+return
+}
 
 // Get will get a single share with given UUID
 func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	_, r.Err = client.Get(resourceURL(client, id), &r.Body, nil)
 
+	return
+}
+
+// GetAccessRights lists all access rules assigned to a Share based on its id. To extract
+// the AccessRight slice from the response, call the Extract method on the ListAccessRightsResult.
+// Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
+func GetAccessRights(client *golangsdk.ServiceClient, id string) (r AccessRightsResult) {
+	requestBody := map[string]interface{}{"os-access_list": nil}
+	_, r.Err = client.Post(rootURL(client, id), requestBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
 	return
 }

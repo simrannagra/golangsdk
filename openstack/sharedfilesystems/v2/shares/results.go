@@ -47,7 +47,7 @@ type GrantAccessResult struct {
 }
 
 // Extract will get a slice of AccessRight objects from the commonResult
-func (r ListAccessRightsResult) Extract() ([]AccessRight, error) {
+func (r AccessRightsResult) Extract() ([]AccessRight, error) {
 	var s struct {
 		AccessRights []AccessRight `json:"access_list"`
 	}
@@ -56,7 +56,7 @@ func (r ListAccessRightsResult) Extract() ([]AccessRight, error) {
 }
 
 // ListAccessRightsResult contains the result body and error from a ListAccessRights request.
-type ListAccessRightsResult struct {
+type AccessRightsResult struct {
 	golangsdk.Result
 }
 

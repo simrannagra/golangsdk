@@ -110,7 +110,7 @@ func TestListAccessRights(t *testing.T) {
 	// Client c must have Microversion set; minimum supported microversion for Grant Access is 2.7
 	c.Microversion = "2.7"
 
-	s, err := shares.ListAccessRights(c, shareID).Extract()
+	s, err := shares.GetAccessRights(c, shareID).Extract()
 
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s, []shares.AccessRight{
