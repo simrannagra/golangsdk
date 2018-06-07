@@ -4,6 +4,8 @@ import (
 
 	"github.com/huaweicloud/golangsdk"
 
+	"reflect"
+	"github.com/huaweicloud/golangsdk/pagination"
 )
 
 // GrantAccessOptsBuilder allows extensions to add additional parameters to the
@@ -103,6 +105,18 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 	return
 }
 
+
+// ListAccessRights lists all access rules assigned to a Share based on its id. To extract
+// the AccessRight slice from the response, call the Extract method on the ListAccessRightsResult.
+// Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
+func ListAccessRights(client *golangsdk.ServiceClient, id string) (r AccessRightsResult) {
+	requestBody := map[string]interface{}{"os-access_list": nil}
+	_, r.Err = client.Post(rootURL(client, id), requestBody, &r.Body, &golangsdk.RequestOpts{
+		OkCodes: []int{200},
+	})
+	return
+}
+
 // Delete the Access Rule
 type DeleteAccessOptsBuilder interface {
 	ToDeleteAccessMap() (map[string]interface{}, error)
@@ -129,11 +143,11 @@ func DeleteAccess(client *golangsdk.ServiceClient, share_id string, opts DeleteA
 	})
 	return
 }
-// Delete will delete an existing Share with the given UUID.
-func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-_, r.Err = client.Delete(resourceURL(client, id), nil)
-return
-}
+	// Delete will delete an existing Share with the given UUID.
+	func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+	_, r.Err = client.Delete(resourceURL(client, id), nil)
+	return
+	}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
@@ -151,7 +165,7 @@ type UpdateOpts struct {
 	DisplayDescription string `json:"display_description,omitempty"`
 }
 
-// ToSubnetUpdateMap builds an update body based on UpdateOpts.
+// ToShareUpdateMap builds an update body based on UpdateOpts.
 func (opts UpdateOpts) ToShareUpdateMap() (map[string]interface{}, error) {
 	return golangsdk.BuildRequestBody(opts, "share")
 }
@@ -183,13 +197,158 @@ func Get(client *golangsdk.ServiceClient, id string) (r GetResult) {
 	return
 }
 
-// GetAccessRights lists all access rules assigned to a Share based on its id. To extract
-// the AccessRight slice from the response, call the Extract method on the ListAccessRightsResult.
-// Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
-func GetAccessRights(client *golangsdk.ServiceClient, id string) (r AccessRightsResult) {
-	requestBody := map[string]interface{}{"os-access_list": nil}
-	_, r.Err = client.Post(rootURL(client, id), requestBody, &r.Body, &golangsdk.RequestOpts{
-		OkCodes: []int{200},
-	})
-	return
+// SortDir is a type for specifying in which direction to sort a list of Shares.
+type SortDir string
+
+// SortKey is a type for specifying by which key to sort a list of Shares.
+type SortKey string
+
+var (
+	// SortAsc is used to sort a list of Shares in ascending order.
+	SortAsc SortDir = "asc"
+	// SortDesc is used to sort a list of Shares in descending order.
+	SortDesc SortDir = "desc"
+	// SortId is used to sort a list of Shares by id.
+	SortId SortKey = "id"
+	// SortName is used to sort a list of Shares by name.
+	SortName SortKey = "name"
+	// SortSize is used to sort a list of Shares by size.
+	SortSize SortKey = "size"
+	// SortHost is used to sort a list of Shares by host.
+	SortHost SortKey = "host"
+	// SortShareProto is used to sort a list of Shares by share_proto.
+	SortShareProto SortKey = "share_proto"
+	// SortStatus is used to sort a list of Shares by status.
+	SortStatus SortKey = "status"
+	// SortProjectId is used to sort a list of Shares by project_id.
+	SortProjectId SortKey = "project_id"
+	// SortShareTypeId is used to sort a list of Shares by share_type_id.
+	SortShareTypeId SortKey = "share_type_id"
+	// SortShareNetworkId is used to sort a list of Shares by share_network_id.
+	SortShareNetworkId SortKey = "share_network_id"
+	// SortSnapshotId is used to sort a list of Shares by snapshot_id.
+	SortSnapshotId SortKey = "snapshot_id"
+	// SortCreatedAt is used to sort a list of Shares by date created.
+	SortCreatedAt SortKey = "created_at"
+	// SortUpdatedAt is used to sort a list of Shares by date updated.
+	SortUpdatedAt SortKey = "updated_at"
+)
+
+// ListOptsBuilder allows extensions to add additional parameters to the
+// List request.
+type ListOptsBuilder interface {
+	ToShareListQuery() (string, error)
 }
+
+// ListOpts allows the filtering and sorting of paginated collections through
+// the API. Filtering is achieved by passing in struct field values that map to
+// the share attributes you want to see returned. SortKey allows you to sort
+// by a particular share attribute. SortDir sets the direction, and is either
+// `asc' or `desc'. Marker and Limit are used for pagination.
+type ListOpts struct {
+	ID       string  `q:"id"`
+	Status   string  `q:"status"`
+	Name     string  `q:"name"`
+	Limit    int     `q:"limit"`
+	Offset   int     `q:"offset"`
+	SortKey  SortKey `q:"sort_key"`
+	SortDir  SortDir `q:"sort_dir"`
+	IsPublic bool    `q:"is_public"`
+}
+
+func FilterShareIdParam(opts ListOpts) (filter ListOpts) {
+
+	if opts.ID != "" {
+		filter.ID = opts.ID
+	}
+
+	filter.Name = opts.Name
+	filter.Status = opts.Status
+	filter.Limit = opts.Limit
+	filter.Offset = opts.Offset
+	filter.SortKey = opts.SortKey
+	filter.SortDir = opts.SortDir
+	filter.IsPublic = opts.IsPublic
+
+	return filter
+}
+
+// List returns a Pager which allows you to iterate over a collection of
+// share resources. It accepts a ListOpts struct, which allows you to
+// filter the returned collection for greater efficiency.
+func List(c *golangsdk.ServiceClient, opts ListOpts) ([]Share, error) {
+	filter := FilterShareIdParam(opts)
+	q, err := golangsdk.BuildQueryString(&filter)
+	if err != nil {
+		return nil, err
+	}
+	u := listURL(c) + q.String()
+	pages, err := pagination.NewPager(c, u, func(r pagination.PageResult) pagination.Page {
+		return SharePage{pagination.LinkedPageBase{PageResult: r}}
+	}).AllPages()
+
+	allShares, err := ExtractShares(pages)
+	if err != nil {
+		return nil, err
+	}
+
+	return FilterShares(allShares, opts)
+}
+
+func FilterShares(shares []Share, opts ListOpts) ([]Share, error) {
+
+	var refinedShares []Share
+	var matched bool
+	m := map[string]interface{}{}
+
+	if opts.ID != "" {
+		m["ID"] = opts.ID
+	}
+
+	if len(m) > 0 && len(shares) > 0 {
+		for _, share := range shares {
+			matched = true
+
+			for key, value := range m {
+				if sVal := getStructField(&share, key); !(sVal == value) {
+					matched = false
+				}
+			}
+
+			if matched {
+				refinedShares = append(refinedShares, share)
+			}
+		}
+	} else {
+		refinedShares = shares
+	}
+	return refinedShares, nil
+}
+
+func getStructField(v *Share, field string) string {
+	r := reflect.ValueOf(v)
+	f := reflect.Indirect(r).FieldByName(field)
+	return string(f.String())
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

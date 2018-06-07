@@ -244,3 +244,33 @@ var getExportLocationsResponse = `{
     ]
 }`
 
+var listResponse = `{
+    "shares": [
+		{
+        "links": [
+            {
+                "href": "http://172.18.198.54:8786/v2/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+                "rel": "self"
+            },
+            {
+                "href": "http://172.18.198.54:8786/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+                "rel": "bookmark"
+            }
+        ],
+        "availability_zone": "nova",
+        "share_network_id": "713df749-aac0-4a54-af52-10f6c991e80c",
+        "id": "011d21e2-fbc3-4e4a-9993-9ea223f73264",
+        "size": 1,
+        "share_type": "25747776-08e5-494f-ab40-a64b9d20d8f7",
+        "project_id": "16e1ab15c35a457e9c2b2aa189f544e1",
+        "status": "available",
+        "description": "My custom share London",
+        "host": "manila2@generic1#GENERIC1",
+        "is_public": true,
+		"created_at": "2015-09-18T10:25:24.000000",
+        "name": "my_test_share",
+        "share_proto": "NFS",
+        "volume_type": "default"
+	}
+    ]
+}`

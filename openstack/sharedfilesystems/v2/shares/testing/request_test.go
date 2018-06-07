@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func TestCreate(t *testing.T) {
+func TestCreateShare(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -26,7 +26,7 @@ func TestCreate(t *testing.T) {
 	th.AssertEquals(t, n.ShareProto, "NFS")
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteShare(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -50,7 +50,7 @@ func TestUpdate(t *testing.T) {
 	th.AssertEquals(t, n.Description, "test")
 }
 
-func TestGet(t *testing.T) {
+func TestGetShare(t *testing.T) {
 	th.SetupHTTP()
 	defer th.TeardownHTTP()
 
@@ -110,7 +110,7 @@ func TestListAccessRights(t *testing.T) {
 	// Client c must have Microversion set; minimum supported microversion for Grant Access is 2.7
 	c.Microversion = "2.7"
 
-	s, err := shares.GetAccessRights(c, shareID).Extract()
+	s, err := shares.ListAccessRights(c, shareID).Extract()
 
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s, []shares.AccessRight{
@@ -201,3 +201,55 @@ func TestGetExportLocationsSuccess(t *testing.T) {
 	})
 }
 
+func TestListShare(t *testing.T) {
+
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc(shareEndpoint+"/detail", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "GET")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprintf(w, listResponse)
+	})
+
+	//count := 0
+
+	actual, err := shares.List(fake.ServiceClient(),shares.ListOpts{})
+	if err != nil {
+		t.Errorf("Failed to extract clusters: %v", err)
+	}
+
+	expected := []shares.Share{
+		{
+			Status:           "available",
+			AvailabilityZone: "nova",
+			ShareNetworkID:   "713df749-aac0-4a54-af52-10f6c991e80c",
+			Name:             "my_test_share",
+			ID:               "011d21e2-fbc3-4e4a-9993-9ea223f73264",
+			Size:             1,
+			ShareType:        "25747776-08e5-494f-ab40-a64b9d20d8f7",
+			ProjectID:        "16e1ab15c35a457e9c2b2aa189f544e1",
+			Description:      "My custom share London",
+			Host:             "manila2@generic1#GENERIC1",
+			IsPublic:         true,
+			ShareProto:       "NFS",
+			VolumeType:       "default",
+			CreatedAt:        time.Date(2015, time.September, 18, 10, 25, 24, 0, time.UTC),
+			Links: []map[string]string{
+				{
+					"href": "http://172.18.198.54:8786/v2/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+					"rel":  "self",
+				},
+				{
+					"href": "http://172.18.198.54:8786/16e1ab15c35a457e9c2b2aa189f544e1/shares/011d21e2-fbc3-4e4a-9993-9ea223f73264",
+					"rel":  "bookmark",
+				},
+			},
+		},
+	}
+
+	th.AssertDeepEquals(t, expected, actual)
+}

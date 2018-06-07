@@ -5,6 +5,7 @@ import (
 	"github.com/huaweicloud/golangsdk"
 	"time"
 	"encoding/json"
+	"github.com/huaweicloud/golangsdk/pagination"
 )
 
 // AccessRight contains all information associated with an OpenStack share
@@ -100,19 +101,19 @@ type Share struct {
 	// The availability zone of the share
 	AvailabilityZone string `json:"availability_zone"`
 	// A description of the share
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 	// The host name of the share
 	Host string `json:"host"`
 	// The UUID of the share
 	ID string `json:"id"`
 	// Indicates the visibility of the share
-	IsPublic bool `json:"is_public,omitempty"`
+	IsPublic bool `json:"is_public"`
 	// Share links for pagination
 	Links []map[string]string `json:"links"`
 	// Key, value -pairs of custom metadata
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Metadata map[string]string `json:"metadata"`
 	// The name of the share
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 	// The UUID of the project to which this share belongs to
 	ProjectID string `json:"project_id"`
 	// The UUID of the share network
@@ -128,7 +129,7 @@ type Share struct {
 	// The share status
 	Status string `json:"status"`
 	// The type of the volume
-	VolumeType string `json:"volume_type,omitempty"`
+	VolumeType string `json:"volume_type"`
 	// Timestamp when the share was created
 	CreatedAt time.Time `json:"-"`
 	//Specifies the mount location.
@@ -187,3 +188,39 @@ type GetResult struct {
 	commonResult
 }
 
+// SharePage is the page returned by a pager when traversing over a
+// collection of Shares.
+type SharePage struct {
+	pagination.LinkedPageBase
+}
+
+// IsEmpty returns true if a ListResult contains no Shares.
+func (r SharePage) IsEmpty() (bool, error) {
+	stacks, err := ExtractShares(r)
+	return len(stacks) == 0, err
+}
+
+// ExtractShares accepts a Page struct, specifically a SharePage struct,
+// and extracts the elements into a slice of share structs. In other words,
+// a generic collection is mapped into a relevant slice.
+func ExtractShares(r pagination.Page) ([]Share, error) {
+	var s struct {
+		ListedStacks []Share `json:"shares"`
+	}
+	err := (r.(SharePage)).ExtractInto(&s)
+	return s.ListedStacks, err
+}
+
+// NextPageURL is invoked when a paginated collection of shares has reached
+// the end of a page and the pager seeks to traverse over a new one. In order
+// to do this, it needs to construct the next page's URL.
+func (r SharePage) NextPageURL() (string, error) {
+	var s struct {
+		Links []golangsdk.Link `json:"shares_links"`
+	}
+	err := r.ExtractInto(&s)
+	if err != nil {
+		return "", err
+	}
+	return golangsdk.ExtractNextURL(s.Links)
+}
