@@ -24,3 +24,7 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 func listURL(c *golangsdk.ServiceClient) string {
 	return c.ServiceURL("shares","detail")
 }
+
+func grantAccessURL(c *golangsdk.ServiceClient, id string) string {
+	return c.ServiceURL("shares", id, "action")
+}

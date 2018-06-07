@@ -44,7 +44,6 @@ func (r GrantAccessResult) Extract() (*AccessRight, error) {
 // GrantAccessResult contains the result body and error from an GrantAccess request.
 type GrantAccessResult struct {
 	commonResult
-	//golangsdk.Result
 }
 
 // Extract will get a slice of AccessRight objects from the commonResult
@@ -56,7 +55,7 @@ func (r AccessRightsResult) Extract() ([]AccessRight, error) {
 	return s.AccessRights, err
 }
 
-// ListAccessRightsResult contains the result body and error from a ListAccessRights request.
+// AccessRightsResult contains the result body and error from a AccessRight request.
 type AccessRightsResult struct {
 	golangsdk.Result
 }
@@ -192,6 +191,16 @@ type GetResult struct {
 // collection of Shares.
 type SharePage struct {
 	pagination.LinkedPageBase
+}
+
+// ExpandResult contains the response body and error from a Expand request.
+type ExpandResult struct {
+	golangsdk.ErrResult
+}
+
+// ShrinkResult contains the response body and error from a Shrink request.
+type ShrinkResult struct {
+	golangsdk.ErrResult
 }
 
 // IsEmpty returns true if a ListResult contains no Shares.

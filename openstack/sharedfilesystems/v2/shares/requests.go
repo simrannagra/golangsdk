@@ -107,7 +107,7 @@ func Create(client *golangsdk.ServiceClient, opts CreateOptsBuilder) (r CreateRe
 
 
 // ListAccessRights lists all access rules assigned to a Share based on its id. To extract
-// the AccessRight slice from the response, call the Extract method on the ListAccessRightsResult.
+// the AccessRight slice from the response, call the Extract method on the AccessRightsResult.
 // Client must have Microversion set; minimum supported microversion for ListAccessRights is 2.7.
 func ListAccessRights(client *golangsdk.ServiceClient, id string) (r AccessRightsResult) {
 	requestBody := map[string]interface{}{"os-access_list": nil}
@@ -143,11 +143,12 @@ func DeleteAccess(client *golangsdk.ServiceClient, share_id string, opts DeleteA
 	})
 	return
 }
-	// Delete will delete an existing Share with the given UUID.
-	func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
-	_, r.Err = client.Delete(resourceURL(client, id), nil)
-	return
-	}
+
+// Delete will delete an existing Share with the given UUID.
+func Delete(client *golangsdk.ServiceClient, id string) (r DeleteResult) {
+_, r.Err = client.Delete(resourceURL(client, id), nil)
+return
+}
 
 // UpdateOptsBuilder allows extensions to add additional parameters to the
 // Update request.
@@ -329,6 +330,85 @@ func getStructField(v *Share, field string) string {
 	r := reflect.ValueOf(v)
 	f := reflect.Indirect(r).FieldByName(field)
 	return string(f.String())
+}
+
+
+// ExpandOptsBuilder allows extensions to add additional parameters to the
+// Expand request.
+type ExpandOptsBuilder interface {
+	ToShareExpandMap() (map[string]interface{}, error)
+}
+
+// ExpandOpts contains the options for expanding a Share. This object is
+// passed to shares.Expand(). For more information about these parameters,
+// please refer to the Share object, or the shared file systems API v2
+// documentation
+type ExpandOpts struct {
+	// Specifies the os-extend object.
+	OSExtend OSExtendOpts `json:"os-extend" required:"true"`
+}
+
+type OSExtendOpts struct {
+	// Specifies the post-expansion capacity (GB) of the shared file system.
+	NewSize int `json:"new_size" required:"true"`
+}
+
+// ToShareExpandMap assembles a request body based on the contents of a
+// ExpandOpts.
+func (opts ExpandOpts) ToShareExpandMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+// Expand will expand a  Share based on the values in ExpandOpts.
+func Expand(client *golangsdk.ServiceClient, share_id string, opts ExpandOptsBuilder) (r ExpandResult) {
+	b, err := opts.ToShareExpandMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(grantAccessURL(client, share_id), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{202},
+	})
+	return
+}
+
+// ShrinkOptsBuilder allows extensions to add additional parameters to the
+// Shrink request.
+type ShrinkOptsBuilder interface {
+	ToShareShrinkMap() (map[string]interface{}, error)
+}
+
+// ShrinkOpts contains the options for shrinking a Share. This object is
+// passed to shares.Shrink(). For more information about these parameters,
+// please refer to the Share object, or the shared file systems API v2
+// documentation
+type ShrinkOpts struct {
+	// Specifies the os-shrink object.
+	OSShrink OSShrinkOpts `json:"os-shrink" required:"true"`
+}
+
+type OSShrinkOpts struct {
+	// Specifies the post-shrinking capacity (GB) of the shared file system.
+	NewSize int `json:"new_size" required:"true"`
+}
+
+// ToShareShrinkMap assembles a request body based on the contents of a
+// ShrinkOpts.
+func (opts ShrinkOpts) ToShareShrinkMap() (map[string]interface{}, error) {
+	return golangsdk.BuildRequestBody(opts, "")
+}
+
+// Shrink will shrink a  Share based on the values in ShrinkOpts.
+func Shrink(client *golangsdk.ServiceClient, share_id string, opts ShrinkOptsBuilder) (r ShrinkResult) {
+	b, err := opts.ToShareShrinkMap()
+	if err != nil {
+		r.Err = err
+		return
+	}
+	_, r.Err = client.Post(grantAccessURL(client, share_id), b, nil, &golangsdk.RequestOpts{
+		OkCodes: []int{202},
+	})
+	return
 }
 
 

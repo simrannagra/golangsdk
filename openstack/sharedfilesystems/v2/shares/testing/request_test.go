@@ -253,3 +253,37 @@ func TestListShare(t *testing.T) {
 
 	th.AssertDeepEquals(t, expected, actual)
 }
+
+func TestExpand(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc(shareEndpoint+"/"+shareID+"/"+"action", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Accept", "application/json")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+	})
+	options := shares.ExpandOpts{OSExtend: shares.OSExtendOpts{NewSize: 3}}
+	resp := shares.Expand(fake.ServiceClient(), shareID, options)
+	th.AssertNoErr(t, resp.Err)
+
+}
+
+func TestShrink(t *testing.T) {
+	th.SetupHTTP()
+	defer th.TeardownHTTP()
+
+	th.Mux.HandleFunc(shareEndpoint+"/"+shareID+"/"+"action", func(w http.ResponseWriter, r *http.Request) {
+		th.TestMethod(t, r, "POST")
+		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
+		th.TestHeader(t, r, "Accept", "application/json")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+	})
+	options := shares.ShrinkOpts{OSShrink: shares.OSShrinkOpts{NewSize: 2}}
+	resp := shares.Shrink(fake.ServiceClient(), shareID, options)
+	th.AssertNoErr(t, resp.Err)
+
+}
