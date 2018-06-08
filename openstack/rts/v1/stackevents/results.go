@@ -97,23 +97,4 @@ func ExtractEvents(r pagination.Page) ([]Event, error) {
 	return s.Events, err
 }
 
-// ExtractResourceEvents interprets the results of a single page from a
-// ListResourceEvents() call, producing a slice of Event entities.
-func ExtractResourceEvents(page pagination.Page) ([]Event, error) {
-	return ExtractEvents(page)
-}
 
-// GetResult represents the result of a Get operation.
-type GetResult struct {
-	golangsdk.Result
-}
-
-// Extract returns a pointer to an Event object and is called after a
-// Get operation.
-func (r GetResult) Extract() (*Event, error) {
-	var s struct {
-		Event *Event `json:"event"`
-	}
-	err := r.ExtractInto(&s)
-	return s.Event, err
-}

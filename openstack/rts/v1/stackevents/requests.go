@@ -5,11 +5,6 @@ import (
 	"github.com/huaweicloud/golangsdk/pagination"
 )
 
-// Find retrieves stack events for the given stack name.
-func Find(c *golangsdk.ServiceClient, stackName string) (r FindResult) {
-	_, r.Err = c.Get(findURL(c, stackName), &r.Body, nil)
-	return
-}
 
 // SortDir is a type for specifying in which direction to sort a list of events.
 type SortDir string
@@ -118,65 +113,3 @@ func List(client *golangsdk.ServiceClient, stackName, stackID string, opts ListO
 	})
 }
 
-// ListResourceEventsOptsBuilder allows extensions to add additional parameters to the
-// ListResourceEvents request.
-type ListResourceEventsOptsBuilder interface {
-	ToResourceEventListQuery() (string, error)
-}
-
-// ListResourceEventsOpts allows the filtering and sorting of paginated resource events through
-// the API. Marker and Limit are used for pagination.
-type ListResourceEventsOpts struct {
-	// The stack resource ID with which to start the listing.
-	Marker string `q:"marker"`
-	// Integer value for the limit of values to return.
-	Limit int `q:"limit"`
-	// Filters the event list by the specified ResourceAction. You can use this
-	// filter multiple times to filter by multiple resource actions: CREATE, DELETE,
-	// UPDATE, ROLLBACK, SUSPEND, RESUME or ADOPT.
-	ResourceActions []string `q:"resource_action"`
-	// Filters the event list by the specified resource_status. You can use this
-	// filter multiple times to filter by multiple resource statuses: IN_PROGRESS,
-	// COMPLETE or FAILED.
-	ResourceStatuses []string `q:"resource_status"`
-	// Filters the event list by the specified resource_name. You can use this
-	// filter multiple times to filter by multiple resource names.
-	ResourceNames []string `q:"resource_name"`
-	// Filters the event list by the specified resource_type. You can use this
-	// filter multiple times to filter by multiple resource types: OS::Nova::Server,
-	// OS::Cinder::Volume, and so on.
-	ResourceTypes []string `q:"resource_type"`
-	// Sorts the event list by: resource_type or created_at.
-	SortKey SortKey `q:"sort_keys"`
-	// The sort direction of the event list. Which is asc (ascending) or desc (descending).
-	SortDir SortDir `q:"sort_dir"`
-}
-
-// ToResourceEventListQuery formats a ListResourceEventsOpts into a query string.
-func (opts ListResourceEventsOpts) ToResourceEventListQuery() (string, error) {
-	q, err := golangsdk.BuildQueryString(opts)
-	return q.String(), err
-}
-
-// ListResourceEvents makes a request against the API to list resources for the given stack.
-func ListResourceEvents(client *golangsdk.ServiceClient, stackName, stackID, resourceName string, opts ListResourceEventsOptsBuilder) pagination.Pager {
-	url := listResourceEventsURL(client, stackName, stackID, resourceName)
-	if opts != nil {
-		query, err := opts.ToResourceEventListQuery()
-		if err != nil {
-			return pagination.Pager{Err: err}
-		}
-		url += query
-	}
-	return pagination.NewPager(client, url, func(r pagination.PageResult) pagination.Page {
-		p := EventPage{pagination.MarkerPageBase{PageResult: r}}
-		p.MarkerPageBase.Owner = p
-		return p
-	})
-}
-
-// Get retreives data for the given stack resource.
-func Get(c *golangsdk.ServiceClient, stackName, stackID, resourceName, eventID string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, stackName, stackID, resourceName, eventID), &r.Body, nil)
-	return
-}
