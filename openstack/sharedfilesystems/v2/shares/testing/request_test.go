@@ -110,7 +110,7 @@ func TestListAccessRights(t *testing.T) {
 	// Client c must have Microversion set; minimum supported microversion for Grant Access is 2.7
 	c.Microversion = "2.7"
 
-	s, err := shares.ListAccessRights(c, shareID).Extract()
+	s, err := shares.ListAccessRights(c, shareID).ExtractAccessRights()
 
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s, []shares.AccessRight{
@@ -190,7 +190,7 @@ func TestGetExportLocationsSuccess(t *testing.T) {
 	})
 
 	c := client.ServiceClient()
-	s, err := shares.GetExportLocations(c, shareID).Extract()
+	s, err := shares.GetExportLocations(c, shareID).ExtractExportLocations()
 
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s, []shares.ExportLocation{

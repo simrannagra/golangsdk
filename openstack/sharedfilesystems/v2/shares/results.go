@@ -47,7 +47,7 @@ type GrantAccessResult struct {
 }
 
 // Extract will get a slice of AccessRight objects from the commonResult
-func (r AccessRightsResult) Extract() ([]AccessRight, error) {
+func (r AccessRightsResult) ExtractAccessRights() ([]AccessRight, error) {
 	var s struct {
 		AccessRights []AccessRight `json:"access_list"`
 	}
@@ -87,7 +87,7 @@ type ExportLocation struct {
 }
 
 // Extract will get the Export Locations from the commonResult
-func (r GetExportLocationsResult) Extract() ([]ExportLocation, error) {
+func (r GetExportLocationsResult) ExtractExportLocations() ([]ExportLocation, error) {
 	var s struct {
 		ExportLocations []ExportLocation `json:"export_locations"`
 	}
