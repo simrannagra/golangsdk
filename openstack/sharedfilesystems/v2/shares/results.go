@@ -46,7 +46,7 @@ type GrantAccessResult struct {
 	commonResult
 }
 
-// Extract will get a slice of AccessRight objects from the commonResult
+// Extract will get a slice of AccessRight objects from the AccessRightsResult
 func (r AccessRightsResult) ExtractAccessRights() ([]AccessRight, error) {
 	var s struct {
 		AccessRights []AccessRight `json:"access_list"`

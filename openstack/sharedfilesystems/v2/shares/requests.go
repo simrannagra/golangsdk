@@ -6,7 +6,13 @@ import (
 
 	"reflect"
 	"github.com/huaweicloud/golangsdk/pagination"
+	"log"
 )
+
+var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
+	MoreHeaders: map[string]string{"Content-Type": "application/json",
+	"X-Openstack-Manila-Api-Version": "2.9"},
+}
 
 // GrantAccessOptsBuilder allows extensions to add additional parameters to the
 // GrantAccess request.
@@ -186,9 +192,11 @@ func Update(c *golangsdk.ServiceClient,id string, opts UpdateOptsBuilder) (r Upd
 
 //Gets the Mount/Export Locations of the SFS specified
 func GetExportLocations(client *golangsdk.ServiceClient, id string) (r GetExportLocationsResult) {
-client.Microversion="2.9"
-_, r.Err = client.Get(getMountLocationsURL(client, id), &r.Body, nil)
-return
+	log.Printf("[DEBUG] create url:%q, body=%#v", rootURL(client, id), &r.Body)
+	reqOpt := &golangsdk.RequestOpts{OkCodes: []int{200},
+		MoreHeaders: RequestOpts.MoreHeaders}
+	_, r.Err = client.Get(getMountLocationsURL(client, id), &r.Body, reqOpt)
+	return
 }
 
 // Get will get a single share with given UUID
