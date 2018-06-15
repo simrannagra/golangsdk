@@ -88,7 +88,7 @@ func (r HostPage) NextPageURL() (string, error) {
 	return golangsdk.ExtractNextURL(s.Links)
 }
 
-)
+
 
 type commonResult struct {
 	golangsdk.Result
@@ -120,6 +120,7 @@ type UpdateResult struct {
 
 type DeleteResult struct {
 	commonResult
+}
 // GetResult represents the result of a get operation. Call its Extract
 // method to interpret it as a host.
 type GetResult struct {

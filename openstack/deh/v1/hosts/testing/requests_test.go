@@ -8,6 +8,7 @@ import (
 	"github.com/huaweicloud/golangsdk/openstack/deh/v1/hosts"
 	fake "github.com/huaweicloud/golangsdk/openstack/deh/v1/hosts/common"
 	th "github.com/huaweicloud/golangsdk/testhelper"
+	"github.com/huaweicloud/golangsdk/testhelper/client"
 )
 
 func TestGet(t *testing.T) {
@@ -225,14 +226,7 @@ func TestListServer(t *testing.T) {
 		},
 	}
 	th.AssertDeepEquals(t, expected, actual)
-	"fmt"
-	"github.com/huaweicloud/golangsdk/openstack/deh/v1/hosts"
-	th "github.com/huaweicloud/golangsdk/testhelper"
-	fake "github.com/huaweicloud/golangsdk/openstack/deh/v1/common"
-	"testing"
-	"net/http"
-	"github.com/huaweicloud/golangsdk/testhelper/client"
-)
+}
 
 
 func TestAllocateDeH(t *testing.T) {

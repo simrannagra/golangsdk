@@ -72,7 +72,7 @@ func Update(c *golangsdk.ServiceClient, hostID string, opts UpdateOptsBuilder) (
 func Delete(c *golangsdk.ServiceClient, hostid string) (r DeleteResult) {
 	_, r.Err = c.Delete(CommonURL(c, hostid), nil)
 	return
-
+}
 
 // ListOpts allows the filtering and sorting of paginated collections through
 // the API.
