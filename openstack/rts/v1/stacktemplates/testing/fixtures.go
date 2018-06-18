@@ -2,10 +2,10 @@ package testing
 
 import (
 	"fmt"
-	"net/http"
-	"testing"
 	th "github.com/huaweicloud/golangsdk/testhelper"
 	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"net/http"
+	"testing"
 )
 
 // GetExpected represents the expected object from a Get request.

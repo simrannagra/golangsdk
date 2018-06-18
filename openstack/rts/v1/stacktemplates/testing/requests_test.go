@@ -19,4 +19,3 @@ func TestGetTemplate(t *testing.T) {
 	expected := GetExpected
 	th.AssertDeepEquals(t, expected, string(actual))
 }
-

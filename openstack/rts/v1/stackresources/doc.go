@@ -16,5 +16,3 @@ fmt.Printf("%+v\n", resource)
 */
 
 package stackresources
-
-

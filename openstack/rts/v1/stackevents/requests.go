@@ -5,7 +5,6 @@ import (
 	"github.com/huaweicloud/golangsdk/pagination"
 )
 
-
 // SortDir is a type for specifying in which direction to sort a list of events.
 type SortDir string
 
@@ -112,4 +111,3 @@ func List(client *golangsdk.ServiceClient, stackName, stackID string, opts ListO
 		return p
 	})
 }
-

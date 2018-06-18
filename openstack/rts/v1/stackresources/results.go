@@ -2,23 +2,23 @@ package stackresources
 
 import (
 	"encoding/json"
-	"time"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
+	"time"
 )
 
 // Resource represents a stack resource.
 type Resource struct {
-	CreationTime time.Time              `json:"-"`
-	Links        []golangsdk.Link       `json:"links"`
-	LogicalID    string                 `json:"logical_resource_id"`
-	Name         string                 `json:"resource_name"`
-	PhysicalID   string                 `json:"physical_resource_id"`
-	RequiredBy   []string               `json:"required_by"`
-	Status       string                 `json:"resource_status"`
-	StatusReason string                 `json:"resource_status_reason"`
-	Type         string                 `json:"resource_type"`
-	UpdatedTime  time.Time              `json:"-"`
+	CreationTime time.Time        `json:"-"`
+	Links        []golangsdk.Link `json:"links"`
+	LogicalID    string           `json:"logical_resource_id"`
+	Name         string           `json:"resource_name"`
+	PhysicalID   string           `json:"physical_resource_id"`
+	RequiredBy   []string         `json:"required_by"`
+	Status       string           `json:"resource_status"`
+	StatusReason string           `json:"resource_status_reason"`
+	Type         string           `json:"resource_type"`
+	UpdatedTime  time.Time        `json:"-"`
 }
 
 // ResourcePage is the page returned by a pager when traversing over a

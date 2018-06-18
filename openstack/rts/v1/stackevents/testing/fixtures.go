@@ -136,4 +136,3 @@ func HandleListSuccessfully(t *testing.T, output string) {
 		}
 	})
 }
-

@@ -27,4 +27,3 @@ func TestList(t *testing.T) {
 	th.AssertNoErr(t, err)
 	th.CheckEquals(t, count, 1)
 }
-

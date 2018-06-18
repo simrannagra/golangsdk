@@ -1,19 +1,20 @@
 package stacks
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
-	"time"
-	"bytes"
-	"reflect"
-	"fmt"
-	"strings"
 	"io"
+	"reflect"
+	"strings"
+	"time"
 )
+
 // CreatedStack represents the object extracted from a Create operation.
 type CreatedStack struct {
-	ID    string             `json:"id"`
+	ID    string           `json:"id"`
 	Links []golangsdk.Link `json:"links"`
 }
 
@@ -87,23 +88,23 @@ func ExtractStacks(r pagination.Page) ([]ListedStack, error) {
 // RetrievedStack represents the object extracted from a Get operation.
 // RetrievedStack represents the object extracted from a Get operation.
 type RetrievedStack struct {
-	Capabilities        []interface{}            `json:"capabilities"`
-	CreationTime        time.Time                `json:"-"`
-	Description         string                   `json:"description"`
-	DisableRollback     bool                     `json:"disable_rollback"`
-	ID                  string                   `json:"id"`
-	TenantId			string					  `json:"tenant_id"`
-	Links               []golangsdk.Link       	  `json:"links"`
-	NotificationTopics  []interface{}            `json:"notification_topics"`
-	Outputs             []*Output				 `json:"outputs"`
-	Parameters          map[string]string        `json:"parameters"`
-	Name                string                   `json:"stack_name"`
-	Status              string                   `json:"stack_status"`
-	StatusReason        string                   `json:"stack_status_reason"`
-	Tags                []string                 `json:"tags"`
-	TemplateDescription string                   `json:"template_description"`
-	Timeout             int                      `json:"timeout_mins"`
-	UpdatedTime         time.Time                `json:"-"`
+	Capabilities        []interface{}     `json:"capabilities"`
+	CreationTime        time.Time         `json:"-"`
+	Description         string            `json:"description"`
+	DisableRollback     bool              `json:"disable_rollback"`
+	ID                  string            `json:"id"`
+	TenantId            string            `json:"tenant_id"`
+	Links               []golangsdk.Link  `json:"links"`
+	NotificationTopics  []interface{}     `json:"notification_topics"`
+	Outputs             []*Output         `json:"outputs"`
+	Parameters          map[string]string `json:"parameters"`
+	Name                string            `json:"stack_name"`
+	Status              string            `json:"stack_status"`
+	StatusReason        string            `json:"stack_status_reason"`
+	Tags                []string          `json:"tags"`
+	TemplateDescription string            `json:"template_description"`
+	Timeout             int               `json:"timeout_mins"`
+	UpdatedTime         time.Time         `json:"-"`
 }
 
 // The Output data type.

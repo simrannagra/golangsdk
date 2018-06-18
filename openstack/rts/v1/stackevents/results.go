@@ -96,5 +96,3 @@ func ExtractEvents(r pagination.Page) ([]Event, error) {
 	err := (r.(EventPage)).ExtractInto(&s)
 	return s.Events, err
 }
-
-
