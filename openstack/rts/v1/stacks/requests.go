@@ -3,8 +3,8 @@ package stacks
 import (
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
-	"strings"
 	"reflect"
+	"strings"
 )
 
 // CreateOptsBuilder is the interface options structs have to satisfy in order
@@ -35,7 +35,6 @@ type CreateOpts struct {
 	Timeout int `json:"timeout_mins,omitempty"`
 	// A list of tags to assosciate with the Stack
 	Tags []string `json:"-"`
-
 }
 
 // ToStackCreateMap casts a CreateOpts struct to a map.
@@ -130,7 +129,7 @@ type ListOptsBuilder interface {
 // by a particular network attribute. SortDir sets the direction, and is either
 // `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
-	ID 		string 	`q:"id"`
+	ID      string  `q:"id"`
 	Status  string  `q:"status"`
 	Name    string  `q:"name"`
 	Marker  string  `q:"marker"`
@@ -168,7 +167,6 @@ func FilterStacks(stacks []ListedStack, opts ListOpts) ([]ListedStack, error) {
 	var matched bool
 	m := map[string]interface{}{}
 
-
 	if opts.ID != "" {
 		m["ID"] = opts.ID
 	}
@@ -178,7 +176,6 @@ func FilterStacks(stacks []ListedStack, opts ListOpts) ([]ListedStack, error) {
 	if opts.Status != "" {
 		m["Status"] = opts.Status
 	}
-
 
 	if len(m) > 0 && len(stacks) > 0 {
 		for _, stack := range stacks {
@@ -208,8 +205,8 @@ func getStructField(v *ListedStack, field string) string {
 	return string(f.String())
 }
 
-func Get(c *golangsdk.ServiceClient, stackName, stackID string) (r GetResult) {
-	_, r.Err = c.Get(getURL(c, stackName, stackID), &r.Body, nil)
+func Get(c *golangsdk.ServiceClient, stackName string) (r GetResult) {
+	_, r.Err = c.Get(getURL(c, stackName), &r.Body, nil)
 	return
 }
 

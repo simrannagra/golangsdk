@@ -2,15 +2,14 @@ package testing
 
 import (
 	"fmt"
-	"net/http"
-	"testing"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/openstack/rts/v1/stackresources"
 	th "github.com/huaweicloud/golangsdk/testhelper"
 	fake "github.com/huaweicloud/golangsdk/testhelper/client"
+	"net/http"
+	"testing"
 	"time"
 )
-
 
 // ListExpected represents the expected object from a List request.
 var ListExpected = []stackresources.Resource{
@@ -69,7 +68,7 @@ const ListOutput = `{
 // HandleListSuccessfully creates an HTTP handler at `/stacks/hello_world/49181cd6-169a-4130-9455-31185bbfc5bf/resources`
 // on the test handler mux that responds with a `List` response.
 func HandleListSuccessfully(t *testing.T, output string) {
-	th.Mux.HandleFunc("/stacks/hello_world/49181cd6-169a-4130-9455-31185bbfc5bf/resources", func(w http.ResponseWriter, r *http.Request) {
+	th.Mux.HandleFunc("/stacks/hello_world/resources", func(w http.ResponseWriter, r *http.Request) {
 		th.TestMethod(t, r, "GET")
 		th.TestHeader(t, r, "X-Auth-Token", fake.TokenID)
 		th.TestHeader(t, r, "Accept", "application/json")

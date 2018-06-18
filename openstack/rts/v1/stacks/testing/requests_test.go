@@ -43,7 +43,7 @@ func TestListStack(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleListSuccessfully(t, FullListOutput)
 
-	actual,err := stacks.List(fake.ServiceClient(), stacks.ListOpts{})
+	actual, err := stacks.List(fake.ServiceClient(), stacks.ListOpts{})
 	th.AssertDeepEquals(t, ListExpected, actual)
 	th.AssertNoErr(t, err)
 }
@@ -53,7 +53,7 @@ func TestGetStack(t *testing.T) {
 	defer th.TeardownHTTP()
 	HandleGetSuccessfully(t, GetOutput)
 
-	actual, err := stacks.Get(fake.ServiceClient(), "postman_stack", "16ef0584-4458-41eb-87c8-0dc8d5f66c87").Extract()
+	actual, err := stacks.Get(fake.ServiceClient(), "postman_stack").Extract()
 	th.AssertNoErr(t, err)
 
 	expected := GetExpected
@@ -92,4 +92,3 @@ func TestDeleteStack(t *testing.T) {
 	err := stacks.Delete(fake.ServiceClient(), "golangsdk-test-stack-2", "db6977b2-27aa-4775-9ae7-6213212d4ada").ExtractErr()
 	th.AssertNoErr(t, err)
 }
-

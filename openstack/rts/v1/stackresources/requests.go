@@ -38,8 +38,8 @@ type ListOpts struct {
 //
 // Default policy settings return only those resources that are owned by the
 // tenant who submits the request, unless an admin user submits the request.
-func List(client *golangsdk.ServiceClient, stackName, stackID string, opts ListOpts) ([]Resource, error) {
-	u := listURL(client, stackName, stackID)
+func List(client *golangsdk.ServiceClient, stackName string, opts ListOpts) ([]Resource, error) {
+	u := listURL(client, stackName)
 	pages, err := pagination.NewPager(client, u, func(r pagination.PageResult) pagination.Page {
 		return ResourcePage{pagination.LinkedPageBase{PageResult: r}}
 	}).AllPages()

@@ -1,11 +1,11 @@
 package testing
 
 import (
-	"testing"
 	"github.com/huaweicloud/golangsdk/openstack/rts/v1/stackresources"
 	th "github.com/huaweicloud/golangsdk/testhelper"
 	fake "github.com/huaweicloud/golangsdk/testhelper/client"
-	)
+	"testing"
+)
 
 func TestListResources(t *testing.T) {
 	th.SetupHTTP()
@@ -13,7 +13,7 @@ func TestListResources(t *testing.T) {
 	HandleListSuccessfully(t, ListOutput)
 
 	//count := 0
-	actual,err := stackresources.List(fake.ServiceClient(), "hello_world", "49181cd6-169a-4130-9455-31185bbfc5bf", stackresources.ListOpts{})
+	actual, err := stackresources.List(fake.ServiceClient(), "hello_world", stackresources.ListOpts{})
 	if err != nil {
 		t.Errorf("Failed to extract resources: %v", err)
 	}
