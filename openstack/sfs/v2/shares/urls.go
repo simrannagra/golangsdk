@@ -22,7 +22,7 @@ func resourceURL(c *golangsdk.ServiceClient, id string) string {
 
 //For access rule create , update and delete
 func listURL(c *golangsdk.ServiceClient) string {
-	return c.ServiceURL("shares","detail")
+	return c.ServiceURL("shares", "detail")
 }
 
 func grantAccessURL(c *golangsdk.ServiceClient, id string) string {

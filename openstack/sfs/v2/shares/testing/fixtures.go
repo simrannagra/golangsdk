@@ -128,6 +128,7 @@ var updateResponse = `{
 			"description": "test"
 		}
 	}`
+
 // MockCreateResponse creates a mock response
 func MockUpdateResponse(t *testing.T) {
 	th.Mux.HandleFunc(shareEndpoint+"/"+shareID, func(w http.ResponseWriter, r *http.Request) {
@@ -141,6 +142,7 @@ func MockUpdateResponse(t *testing.T) {
 		fmt.Fprintf(w, updateResponse)
 	})
 }
+
 // MockDeleteResponse creates a mock delete response
 func MockDeleteResponse(t *testing.T) {
 	th.Mux.HandleFunc(shareEndpoint+"/"+shareID, func(w http.ResponseWriter, r *http.Request) {

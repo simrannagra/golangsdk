@@ -1,9 +1,9 @@
 package shares
 
 import (
-	"reflect"
 	"github.com/huaweicloud/golangsdk"
 	"github.com/huaweicloud/golangsdk/pagination"
+	"reflect"
 )
 
 var RequestOpts golangsdk.RequestOpts = golangsdk.RequestOpts{
@@ -70,7 +70,6 @@ type ListOpts struct {
 	IsPublic bool    `q:"is_public"`
 }
 
-
 // List returns a Pager which allows you to iterate over a collection of
 // share resources. It accepts a ListOpts struct, which allows you to
 // filter the returned collection for greater efficiency.
@@ -127,7 +126,6 @@ func getStructField(v *Share, field string) string {
 	f := reflect.Indirect(r).FieldByName(field)
 	return string(f.String())
 }
-
 
 // CreateOptsBuilder allows extensions to add additional parameters to the
 // Create request.
