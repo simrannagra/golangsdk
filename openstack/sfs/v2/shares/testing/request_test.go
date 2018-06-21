@@ -2,7 +2,7 @@ package testing
 
 import (
 	"fmt"
-	"github.com/huaweicloud/golangsdk/openstack/sharedfilesystems/v2/shares"
+	"github.com/huaweicloud/golangsdk/openstack/sfs/v2/shares"
 	th "github.com/huaweicloud/golangsdk/testhelper"
 	"github.com/huaweicloud/golangsdk/testhelper/client"
 	fake "github.com/huaweicloud/golangsdk/testhelper/client"
@@ -143,11 +143,10 @@ func TestGrantAcessRight(t *testing.T) {
 	c.Microversion = "2.7"
 
 	grantaccOpts := shares.GrantAccessOpts{AccessTo: "5232f396-d6cc-4a81-8de3-afd7a7ecdfd8", AccessType: "cert", AccessLevel: "rw"}
-	s, err := shares.GrantAccess(c, shareID, grantaccOpts).Extract()
+	s, err := shares.GrantAccess(c, shareID, grantaccOpts).ExtractAccess()
 
 	th.AssertNoErr(t, err)
 	th.AssertDeepEquals(t, s, &shares.AccessRight{
-		ShareID:     "1b8facf8-b822-4349-a033-e078b2a84b7f",
 		AccessType:  "cert",
 		AccessTo:    "5232f396-d6cc-4a81-8de3-afd7a7ecdfd8",
 		AccessLevel: "rw",
